@@ -1,0 +1,9 @@
+<area shape="rect" id="node3" href="$items_8c.html#cee9fa57d05e04e8965f3e19dc0a472c" title="wrapper around assoc_find which does the lazy expiration logic" alt="" coords="140,72,247,101">
+<area shape="rect" id="node5" href="$assoc_8c.html#4972dca83569e1f192b193facb64a02f" title="assoc_find" alt="" coords="311,32,401,61">
+<area shape="rect" id="node9" href="$items_8c.html#8068353af89272b21fbf0bd88d34118b" title="may fail if transgresses limits" alt="" coords="296,112,416,141">
+<area shape="rect" id="node7" href="$hash_8h.html#1c12edaae63f2e86a5b276a18475f863" title="hash" alt="" coords="501,5,552,35">
+<area shape="rect" id="node11" href="$assoc_8c.html#d2a245870a21e6edd5a7ad482f9dca5c" title="assoc_delete" alt="" coords="471,59,583,88">
+<area shape="rect" id="node13" href="$items_8c.html#5305dd637fb32e9a99b97326de1429eb" title="item_free" alt="" coords="483,112,571,141">
+<area shape="rect" id="node17" href="$memcached_8h.html#841571aaa5b597a35565f8e12d164a59" title="STATS_LOCK" alt="" coords="475,165,579,195">
+<area shape="rect" id="node19" href="$memcached_8h.html#255149a6925c7daf8dbee2d867a36056" title="STATS_UNLOCK" alt="" coords="465,219,588,248">
+<area shape="rect" id="node15" href="$slabs_8c.html#870e49205e3adc320d078b03d8ea3b23" title="Free previously allocated object." alt="" coords="639,112,727,141">

@@ -1,0 +1,7 @@
+<area shape="rect" id="node3" href="$items_8c.html#515ef8e7f0cef67772989fd076f7dcb4" title="do_item_flush_expired" alt="" coords="204,85,375,115">
+<area shape="rect" id="node5" href="$items_8c.html#8068353af89272b21fbf0bd88d34118b" title="may fail if transgresses limits" alt="" coords="424,85,544,115">
+<area shape="rect" id="node7" href="$assoc_8c.html#d2a245870a21e6edd5a7ad482f9dca5c" title="assoc_delete" alt="" coords="599,5,711,35">
+<area shape="rect" id="node9" href="$items_8c.html#5305dd637fb32e9a99b97326de1429eb" title="item_free" alt="" coords="611,59,699,88">
+<area shape="rect" id="node13" href="$memcached_8h.html#841571aaa5b597a35565f8e12d164a59" title="STATS_LOCK" alt="" coords="603,112,707,141">
+<area shape="rect" id="node15" href="$memcached_8h.html#255149a6925c7daf8dbee2d867a36056" title="STATS_UNLOCK" alt="" coords="593,165,716,195">
+<area shape="rect" id="node11" href="$slabs_8c.html#870e49205e3adc320d078b03d8ea3b23" title="Free previously allocated object." alt="" coords="767,59,855,88">

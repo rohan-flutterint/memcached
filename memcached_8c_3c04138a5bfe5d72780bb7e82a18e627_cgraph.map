@@ -1,0 +1,7 @@
+<area shape="rect" id="node3" href="$assoc_8c.html#f7b17ebeaafd6b04053506a27362c45d" title="assoc_init" alt="" coords="187,5,275,35">
+<area shape="rect" id="node5" href="$daemon_8c.html#78ff9cfa411dda44b12c1dd5e5d078e6" title="daemonize" alt="" coords="183,59,279,88">
+<area shape="rect" id="node7" href="$items_8c.html#9b4f1347eb13afcefa40fbe60cd040b4" title="item_init" alt="" coords="191,112,271,141">
+<area shape="rect" id="node9" href="$slabs_8c.html#8cc4ad6521988a6806c2600bd2f2010b" title="Determines the chunk sizes and initializes the slab class descriptors accordingly..." alt="" coords="189,165,272,195">
+<area shape="rect" id="node11" href="$assoc_8c.html#c6141ce9b282dca1917168e18c4c581d" title="start_assoc_maintenance_thread" alt="" coords="107,219,355,248">
+<area shape="rect" id="node13" href="$assoc_8c.html#8efc51803b796ab0ec19318c8459c39f" title="stop_assoc_maintenance_thread" alt="" coords="109,272,352,301">
+<area shape="rect" id="node15" href="$memcached_8h.html#79051074704249cac4424f10d4606fe3" title="thread_init" alt="" coords="184,325,277,355">

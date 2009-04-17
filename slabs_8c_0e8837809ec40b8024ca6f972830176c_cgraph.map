@@ -1,0 +1,5 @@
+<area shape="rect" id="node3" href="$memcached_8h.html#2b022c04b5ceac327d82762206f51ca8" title="item_stats" alt="" coords="163,5,259,35">
+<area shape="rect" id="node7" href="$memcached_8h.html#76a67af22fe6ce802c07e857f06cbdc8" title="item_stats_sizes" alt="" coords="143,59,279,88">
+<area shape="rect" id="node11" href="$slabs_8c.html#0d52f605d063c6de9e3f32e08126915c" title="Fill buffer with stats." alt="" coords="163,112,259,141">
+<area shape="rect" id="node5" href="$items_8c.html#c37d9c76fff27f10050dc069eef7d50c" title="do_item_stats" alt="" coords="348,5,468,35">
+<area shape="rect" id="node9" href="$items_8c.html#83d27e539e6256fe75653def1f4594e3" title="dumps out a list of objects of each size, with granularity of 32 bytes" alt="" coords="328,59,488,88">

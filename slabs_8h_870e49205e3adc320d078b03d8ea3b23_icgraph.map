@@ -1,0 +1,17 @@
+<area shape="rect" id="node3" href="$items_8h.html#5305dd637fb32e9a99b97326de1429eb" title="item_free" alt="" coords="144,59,232,88">
+<area shape="rect" id="node5" href="$items_8h.html#81d7ffedc021b4a576d5712b7cea34a7" title="do_item_remove" alt="" coords="676,5,812,35">
+<area shape="rect" id="node17" href="$items_8h.html#8068353af89272b21fbf0bd88d34118b" title="may fail if transgresses limits" alt="" coords="280,137,400,167">
+<area shape="rect" id="node7" href="$memcached_8h.html#72e74041ab741435d161a044d23d0bef" title="do_add_delta" alt="" coords="872,216,981,245">
+<area shape="rect" id="node11" href="$memcached_8h.html#c2e150055051a36e29e8215f5bc35fca" title="do_store_item" alt="" coords="867,137,987,167">
+<area shape="rect" id="node15" href="$thread_8c.html#5674d2ce2742470b8012fa4184f1fc3b" title="item_remove" alt="" coords="871,5,983,35">
+<area shape="rect" id="node9" href="$thread_8c.html#4b4951c73b23897aee5843fb7306e764" title="add_delta" alt="" coords="1039,216,1127,245">
+<area shape="rect" id="node13" href="$thread_8c.html#c97ce2cadaeb4fe6524c0df01828c232" title="store_item" alt="" coords="1035,137,1131,167">
+<area shape="rect" id="node19" href="$items_8h.html#5b94ba56566ec70ae2a1906e1b6b14ae" title="do_item_alloc" alt="" coords="688,269,800,299">
+<area shape="rect" id="node25" href="$items_8h.html#515ef8e7f0cef67772989fd076f7dcb4" title="do_item_flush_expired" alt="" coords="449,111,620,140">
+<area shape="rect" id="node29" href="$items_8h.html#cee9fa57d05e04e8965f3e19dc0a472c" title="wrapper around assoc_find which does the lazy expiration logic" alt="" coords="481,57,588,87">
+<area shape="rect" id="node34" href="$items_8h.html#cd5e21c19f9875e0d6a74943f90b6cc8" title="update LRU time to current and reposition" alt="" coords="468,217,601,247">
+<area shape="rect" id="node40" href="$thread_8c.html#256717f932dae6220d67fa02af2266bc" title="item_unlink" alt="" coords="487,164,583,193">
+<area shape="rect" id="node23" href="$thread_8c.html#d69cc14d059b72c07e1f0b550b1922c6" title="item_alloc" alt="" coords="881,269,972,299">
+<area shape="rect" id="node27" href="$thread_8c.html#84097b43e7999f753c11603eff36dadc" title="item_flush_expired" alt="" coords="671,163,817,192">
+<area shape="rect" id="node32" href="$thread_8c.html#1ff584f7053e4a5c8f2cffc7186a12aa" title="item_get" alt="" coords="703,59,785,88">
+<area shape="rect" id="node36" href="$thread_8c.html#32cd7e1744d2214e26f0ac267403314e" title="item_replace" alt="" coords="689,216,799,245">

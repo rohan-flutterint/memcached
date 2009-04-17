@@ -1,0 +1,7 @@
+<area shape="rect" id="node3" href="$items_8h.html#5b94ba56566ec70ae2a1906e1b6b14ae" title="do_item_alloc" alt="" coords="145,59,257,88">
+<area shape="rect" id="node15" href="$items_8h.html#9f56df307b2406f372e918860b07adad" title="Returns true if an item will fit in the cache (its size does not exceed the maximum..." alt="" coords="147,112,256,141">
+<area shape="rect" id="node5" href="$memcached_8h.html#72e74041ab741435d161a044d23d0bef" title="do_add_delta" alt="" coords="312,5,421,35">
+<area shape="rect" id="node9" href="$memcached_8h.html#c2e150055051a36e29e8215f5bc35fca" title="do_store_item" alt="" coords="307,59,427,88">
+<area shape="rect" id="node13" href="$thread_8c.html#d69cc14d059b72c07e1f0b550b1922c6" title="item_alloc" alt="" coords="321,112,412,141">
+<area shape="rect" id="node7" href="$thread_8c.html#4b4951c73b23897aee5843fb7306e764" title="add_delta" alt="" coords="479,5,567,35">
+<area shape="rect" id="node11" href="$thread_8c.html#c97ce2cadaeb4fe6524c0df01828c232" title="store_item" alt="" coords="475,59,571,88">

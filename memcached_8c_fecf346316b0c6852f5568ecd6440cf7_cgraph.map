@@ -1,0 +1,18 @@
+<area shape="rect" id="node3" href="$items_8c.html#5b94ba56566ec70ae2a1906e1b6b14ae" title="do_item_alloc" alt="" coords="337,154,449,183">
+<area shape="rect" id="node23" href="$items_8c.html#81d7ffedc021b4a576d5712b7cea34a7" title="do_item_remove" alt="" coords="325,23,461,53">
+<area shape="rect" id="node26" href="$items_8c.html#62b7c83e5bdd71713688f70199319902" title="get_cas_id" alt="" coords="693,337,787,366">
+<area shape="rect" id="node28" href="$memcached_8h.html#2920cc5a90ae6ca85b3dd4b786ac355e" title="item_replace" alt="" coords="167,258,276,287">
+<area shape="rect" id="node45" href="$util_8c.html#cc5ba3b68c57abb666e3534e6616d93d" title="safe_strtoull" alt="" coords="169,387,273,417">
+<area shape="rect" id="node5" href="$items_8c.html#8068353af89272b21fbf0bd88d34118b" title="may fail if transgresses limits" alt="" coords="509,179,629,209">
+<area shape="rect" id="node13" href="$memcached_8h.html#841571aaa5b597a35565f8e12d164a59" title="STATS_LOCK" alt="" coords="688,230,792,259">
+<area shape="rect" id="node15" href="$memcached_8h.html#255149a6925c7daf8dbee2d867a36056" title="STATS_UNLOCK" alt="" coords="679,177,801,206">
+<area shape="rect" id="node17" href="$slabs_8c.html#f71fcc67d3024b6d57945de6215fa421" title="Allocate object of given length." alt="" coords="524,22,615,51">
+<area shape="rect" id="node19" href="$slabs_8c.html#89e035684df4bb1ef8b0852cb2c20f00" title="Given object size, return id to use when allocating/freeing memory for object 0 means..." alt="" coords="524,75,615,105">
+<area shape="rect" id="node7" href="$assoc_8c.html#d2a245870a21e6edd5a7ad482f9dca5c" title="assoc_delete" alt="" coords="684,123,796,153">
+<area shape="rect" id="node9" href="$items_8c.html#5305dd637fb32e9a99b97326de1429eb" title="item_free" alt="" coords="696,21,784,50">
+<area shape="rect" id="node11" href="$slabs_8c.html#870e49205e3adc320d078b03d8ea3b23" title="Free previously allocated object." alt="" coords="852,21,940,50">
+<area shape="rect" id="node30" href="$items_8c.html#cd5e21c19f9875e0d6a74943f90b6cc8" title="update LRU time to current and reposition" alt="" coords="327,258,460,287">
+<area shape="rect" id="node32" href="$items_8c.html#aac564a623aaea767ddbfd0dd07ced15" title="do_item_link" alt="" coords="517,283,621,313">
+<area shape="rect" id="node34" href="$assoc_8c.html#94c9da94d37601ba417f1f8a401dfc01" title="assoc_insert" alt="" coords="688,283,792,313">
+<area shape="rect" id="node36" href="$assoc_8c.html#4972dca83569e1f192b193facb64a02f" title="assoc_find" alt="" coords="851,257,941,286">
+<area shape="rect" id="node38" href="$hash_8h.html#1c12edaae63f2e86a5b276a18475f863" title="hash" alt="" coords="991,283,1041,313">
