@@ -1,4 +1,4 @@
-<area shape="rect" id="node3" href="$memcached_8h.html" title="memcached.h" alt="" coords="916,83,1033,112">
+<area shape="rect" id="node3" href="$memcached_8h.html" title="The main memcached header holding commonly used data structures and function prototypes..." alt="" coords="916,83,1033,112">
 <area shape="rect" id="node23" href="$protocol__binary_8h.html" title="protocol_binary.h" alt="" coords="845,160,979,189">
 <area shape="rect" id="node26" href="$stats_8h.html" title="stats.h" alt="" coords="1003,160,1072,189">
 <area shape="rect" id="node28" href="$slabs_8h.html" title="slabs.h" alt="" coords="1096,160,1163,189">

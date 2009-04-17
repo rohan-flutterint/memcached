@@ -32,9 +32,9 @@
 <a name="l00023"></a>00023 
 <a name="l00025"></a>00025 <span class="keywordtype">void</span> <a class="code" href="slabs_8c.html#870e49205e3adc320d078b03d8ea3b23" title="Free previously allocated object.">slabs_free</a>(<span class="keywordtype">void</span> *ptr, <span class="keywordtype">size_t</span> size, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>);
 <a name="l00026"></a>00026 
-<a name="l00028"></a>00028 <span class="keywordtype">bool</span> <a class="code" href="slabs_8c.html#0e8837809ec40b8024ca6f972830176c" title="Return a datum for stats in binary protocol.">get_stats</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *stat_type, <span class="keywordtype">int</span> nkey, <a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
+<a name="l00028"></a>00028 <span class="keywordtype">bool</span> <a class="code" href="slabs_8c.html#0e8837809ec40b8024ca6f972830176c" title="Return a datum for stats in binary protocol.">get_stats</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *stat_type, <span class="keywordtype">int</span> nkey, <a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
 <a name="l00029"></a>00029  <span class="comment">/*@null@*/</span>
-<a name="l00031"></a>00031 <span class="keywordtype">void</span> <a class="code" href="slabs_8c.html#0d52f605d063c6de9e3f32e08126915c" title="Fill buffer with stats.">slabs_stats</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
+<a name="l00031"></a>00031 <span class="keywordtype">void</span> <a class="code" href="slabs_8c.html#0d52f605d063c6de9e3f32e08126915c" title="Fill buffer with stats.">slabs_stats</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
 <a name="l00032"></a>00032 
 <a name="l00033"></a>00033 <span class="comment">/* Request some slab be moved between classes</span>
 <a name="l00034"></a>00034 <span class="comment">  1 = success</span>
@@ -44,7 +44,7 @@
 <a name="l00038"></a>00038 
 <a name="l00039"></a>00039 <span class="preprocessor">#endif</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 10:12:53 2009 for memcached by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 15:08:21 2009 for memcached by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

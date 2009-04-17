@@ -21,7 +21,10 @@
   </div>
 </div>
 <div class="contents">
-<h1>memcached.h File Reference</h1><code>#include &lt;sys/types.h&gt;</code><br>
+<h1>memcached.h File Reference</h1>The main memcached header holding commonly used data structures and function prototypes.  
+<a href="#_details">More...</a>
+<p>
+<code>#include &lt;sys/types.h&gt;</code><br>
 <code>#include &lt;sys/socket.h&gt;</code><br>
 <code>#include &lt;sys/time.h&gt;</code><br>
 <code>#include &lt;netinet/in.h&gt;</code><br>
@@ -54,7 +57,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dynsection">
 <p><center><img src="memcached_8h__dep__incl.png" border="0" usemap="#memcached.hdep_map" alt=""></center>
 <map name="memcached.hdep_map">
-<area shape="rect" id="node3" href="assoc_8c.html" title="assoc.c" alt="" coords="5,83,77,112"><area shape="rect" id="node5" href="daemon_8c.html" title="daemon.c" alt="" coords="101,83,189,112"><area shape="rect" id="node7" href="globals_8c.html" title="globals.c" alt="" coords="213,83,291,112"><area shape="rect" id="node9" href="hash_8c.html" title="hash.c" alt="" coords="315,83,379,112"><area shape="rect" id="node11" href="internal__tests_8c.html" title="internal_tests.c" alt="" coords="403,83,531,112"><area shape="rect" id="node13" href="items_8c.html" title="items.c" alt="" coords="555,83,627,112"><area shape="rect" id="node15" href="memcached_8c.html" title="memcached.c" alt="" coords="651,83,768,112"><area shape="rect" id="node17" href="sizes_8c.html" title="sizes.c" alt="" coords="792,83,859,112"><area shape="rect" id="node19" href="slabs_8c.html" title="slabs.c" alt="" coords="883,83,949,112"><area shape="rect" id="node21" href="stats_8c.html" title="stats.c" alt="" coords="973,83,1043,112"><area shape="rect" id="node23" href="thread_8c.html" title="thread.c" alt="" coords="1067,83,1144,112"><area shape="rect" id="node25" href="util_8c.html" title="util.c" alt="" coords="1168,83,1221,112"></map>
+<area shape="rect" id="node3" href="assoc_8c.html" title="assoc.c" alt="" coords="5,83,77,112"><area shape="rect" id="node5" href="daemon_8c.html" title="daemon.c" alt="" coords="101,83,189,112"><area shape="rect" id="node7" href="globals_8c.html" title="globals.c" alt="" coords="213,83,291,112"><area shape="rect" id="node9" href="hash_8c.html" title="hash.c" alt="" coords="315,83,379,112"><area shape="rect" id="node11" href="items_8c.html" title="items.c" alt="" coords="403,83,475,112"><area shape="rect" id="node13" href="memcached_8c.html" title="memcached.c" alt="" coords="499,83,616,112"><area shape="rect" id="node15" href="sizes_8c.html" title="sizes.c" alt="" coords="640,83,707,112"><area shape="rect" id="node17" href="slabs_8c.html" title="slabs.c" alt="" coords="731,83,797,112"><area shape="rect" id="node19" href="stats_8c.html" title="stats.c" alt="" coords="821,83,891,112"><area shape="rect" id="node21" href="thread_8c.html" title="thread.c" alt="" coords="915,83,992,112"><area shape="rect" id="node23" href="util_8c.html" title="util.c" alt="" coords="1016,83,1069,112"></map>
 </div>
 
 <p>
@@ -63,14 +66,19 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structslab__stats.html">slab_stats</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stats stored per slab (and per thread).  <a href="structslab__stats.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__stats.html">thread_stats</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stats stored per-thread.  <a href="structthread__stats.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstats.html">stats</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Global <a class="el" href="structstats.html" title="Global stats.">stats</a>.  <a href="structstats.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsettings.html">settings</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Globally accessible <a class="el" href="structsettings.html" title="Globally accessible settings as derived from the commandline.">settings</a> as derived from the commandline.  <a href="structsettings.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__stritem.html">_stritem</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Structure for storing items within memcached.  <a href="struct__stritem.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">LIBEVENT_THREAD</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconn.html">conn</a></td></tr>
@@ -78,6 +86,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#a5fda8abf3b5d8881d799a8b84091c6c">KEY_MAX_LENGTH</a>&nbsp;&nbsp;&nbsp;250</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Maximum length of a key.  <a href="#a5fda8abf3b5d8881d799a8b84091c6c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#b723c5f0e9759c70ed582dfd77431ff7">DATA_BUFFER_SIZE</a>&nbsp;&nbsp;&nbsp;2048</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#05df0398f9b0815a685d15f36fa809c7">UDP_READ_BUFFER_SIZE</a>&nbsp;&nbsp;&nbsp;65536</td></tr>
@@ -129,6 +138,7 @@ This graph shows which files directly or indirectly include this file:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#421b08fd9fc3d24db6d39014c02f66bb">TAIL_REPAIR_TIME</a>&nbsp;&nbsp;&nbsp;(3 * 3600)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">How long an object can reasonably be assumed to be locked before harvesting it on a low memory condition.  <a href="#421b08fd9fc3d24db6d39014c02f66bb"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#6d56e2cd35fd2a8391a19abba528f353">MAX_VERBOSITY_LEVEL</a>&nbsp;&nbsp;&nbsp;2</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#0fdfa9fdfdd2d9cd25d7bd7ad6033e03">ITEM_LINKED</a>&nbsp;&nbsp;&nbsp;1</td></tr>
@@ -151,10 +161,13 @@ This graph shows which files directly or indirectly include this file:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#76c2c7de1009374de65513d72f6e3e56">APPEND_STAT</a>(name, fmt, val)&nbsp;&nbsp;&nbsp;append_stat(name, add_stats, c, fmt, val);</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Append a simple stat with a stat name, value format and value.  <a href="#76c2c7de1009374de65513d72f6e3e56"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#30ab71365faf0a05119b4705e26d81a8">APPEND_NUM_FMT_STAT</a>(name_fmt, num, name, fmt, val)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Append an indexed stat with a stat name (with format), value format and value.  <a href="#30ab71365faf0a05119b4705e26d81a8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#be2689982c5b4d28c7eb6151710f404d">APPEND_NUM_STAT</a>(num, name, fmt, val)&nbsp;&nbsp;&nbsp;APPEND_NUM_FMT_STAT(&quot;%d:%s&quot;, num, name, fmt, val)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Common APPEND_NUM_FMT_STAT format.  <a href="#be2689982c5b4d28c7eb6151710f404d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#e7d628501377024bde05056f4af112bb">IS_UDP</a>(x)&nbsp;&nbsp;&nbsp;(x == ascii_udp_prot)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#2beaf4cbf661902595987c951dca81b5">NREAD_ADD</a>&nbsp;&nbsp;&nbsp;1</td></tr>
@@ -183,10 +196,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Time relative to server start.  <a href="#602ccc3d124c1c56b6afe0ae93e04bc4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef struct <a class="el" href="struct__stritem.html">_stritem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#9063e222b7bfc97808e1ac9ad9053b6e">item</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Structure for storing items within memcached.  <a href="#9063e222b7bfc97808e1ac9ad9053b6e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> )(const char *key, const uint16_t klen, const char *val, const uint32_t vlen, const void *cookie)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Callback for any function producing <a class="el" href="structstats.html" title="Global stats.">stats</a>.  <a href="#b8d9bd9ba0b7b765633bf9b6cbd6aa30"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef struct <a class="el" href="structconn.html">conn</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#6b845d48e30cbb66add29598de2e00a6">conn</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The structure representing a connection into memcached.  <a href="#6b845d48e30cbb66add29598de2e00a6"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7">conn_states</a> { <br>
 &nbsp;&nbsp;<a class="el" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa">conn_listening</a>, 
@@ -205,7 +221,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <br>
  }</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">NOTE: If you modify this table you _MUST_ update the function state_text.  <a href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Possible states of a connection.  <a href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">bin_substates</a> { <br>
 &nbsp;&nbsp;<a class="el" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7cef6c433a3f788f6496712ff3863ed81">bin_no_state</a>, 
 <a class="el" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c79ab816e3175ec539a708893697ccb9d8">bin_reading_set_header</a>, 
@@ -311,6 +327,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">volatile <a class="el" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4">rel_time_t</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="memcached_8h.html#21b2a3d4ff751fe99cdca2d14babc559">current_time</a></td></tr>
 
 </table>
+<hr><a name="_details"></a><h2>Detailed Description</h2>
+The main memcached header holding commonly used data structures and function prototypes. 
+<p>
 <hr><h2>Define Documentation</h2>
 <a class="anchor" name="2d68e635cffd81dd153ce8330c1b30d4"></a><!-- doxytag: member="memcached.h::__builtin_expect" ref="2d68e635cffd81dd153ce8330c1b30d4" args="(x, expected_value)" -->
 <div class="memitem">
@@ -367,7 +386,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <b>Value:</b><div class="fragment"><pre class="fragment">klen = sprintf(key_str, name_fmt, num, name);            \
     vlen = sprintf(val_str, fmt, val);                       \
     add_stats(key_str, klen, val_str, vlen, c);
-</pre></div>
+</pre></div>Append an indexed stat with a stat name (with format), value format and value. 
+<p>
+
 </div>
 </div><p>
 <a class="anchor" name="be2689982c5b4d28c7eb6151710f404d"></a><!-- doxytag: member="memcached.h::APPEND_NUM_STAT" ref="be2689982c5b4d28c7eb6151710f404d" args="(num, name, fmt, val)" -->
@@ -396,6 +417,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="memdoc">
 
 <p>
+Common APPEND_NUM_FMT_STAT format. 
+<p>
 
 </div>
 </div><p>
@@ -421,6 +444,8 @@ This graph shows which files directly or indirectly include this file:</div>
 </div>
 <div class="memdoc">
 
+<p>
+Append a simple stat with a stat name, value format and value. 
 <p>
 
 </div>
@@ -589,9 +614,9 @@ Initial size of the sendmsg() scatter/gather array.
 <div class="memdoc">
 
 <p>
-<b>Value:</b><div class="fragment"><pre class="fragment">((<span class="keywordtype">char</span>*) &amp;((<a class="code" href="struct__stritem.html">item</a>)-&gt;end[0]) + (<a class="code" href="struct__stritem.html">item</a>)-&gt;nkey + 1 \
-         + (<a class="code" href="struct__stritem.html">item</a>)-&gt;nsuffix \
-         + (((<a class="code" href="struct__stritem.html">item</a>)-&gt;it_flags &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
+<b>Value:</b><div class="fragment"><pre class="fragment">((<span class="keywordtype">char</span>*) &amp;((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;end[0]) + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;nkey + 1 \
+         + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;nsuffix \
+         + (((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;it_flags &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
 </pre></div>
 </div>
 </div><p>
@@ -634,8 +659,8 @@ Initial size of the sendmsg() scatter/gather array.
 <div class="memdoc">
 
 <p>
-<b>Value:</b><div class="fragment"><pre class="fragment">(((<span class="keywordtype">char</span>*)&amp;((<a class="code" href="struct__stritem.html">item</a>)-&gt;end[0])) \
-         + (((<a class="code" href="struct__stritem.html">item</a>)-&gt;it_flags &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
+<b>Value:</b><div class="fragment"><pre class="fragment">(((<span class="keywordtype">char</span>*)&amp;((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;end[0])) \
+         + (((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;it_flags &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
 </pre></div>
 </div>
 </div><p>
@@ -703,9 +728,9 @@ Initial size of list of items being returned by "get".
 <div class="memdoc">
 
 <p>
-<b>Value:</b><div class="fragment"><pre class="fragment">(<span class="keyword">sizeof</span>(<span class="keyword">struct </span><a class="code" href="struct__stritem.html">_stritem</a>) + (<a class="code" href="struct__stritem.html">item</a>)-&gt;<a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">nkey</a> + 1 \
-         + (<a class="code" href="struct__stritem.html">item</a>)-&gt;<a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">nsuffix</a> + (<a class="code" href="struct__stritem.html">item</a>)-&gt;<a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">nbytes</a> \
-         + (((<a class="code" href="struct__stritem.html">item</a>)-&gt;<a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a> &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
+<b>Value:</b><div class="fragment"><pre class="fragment">(<span class="keyword">sizeof</span>(<span class="keyword">struct </span><a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">_stritem</a>) + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;<a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">nkey</a> + 1 \
+         + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;<a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">nsuffix</a> + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;<a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">nbytes</a> \
+         + (((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;<a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a> &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
 </pre></div>
 </div>
 </div><p>
@@ -766,8 +791,8 @@ Initial size of list of items being returned by "get".
 <div class="memdoc">
 
 <p>
-<b>Value:</b><div class="fragment"><pre class="fragment">((<span class="keywordtype">char</span>*) &amp;((<a class="code" href="struct__stritem.html">item</a>)-&gt;end[0]) + (<a class="code" href="struct__stritem.html">item</a>)-&gt;nkey + 1 \
-         + (((<a class="code" href="struct__stritem.html">item</a>)-&gt;<a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a> &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
+<b>Value:</b><div class="fragment"><pre class="fragment">((<span class="keywordtype">char</span>*) &amp;((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;end[0]) + (<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;nkey + 1 \
+         + (((<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>)-&gt;<a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a> &amp; <a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">ITEM_CAS</a>) ? <span class="keyword">sizeof</span>(uint64_t) : 0))
 </pre></div>
 </div>
 </div><p>
@@ -782,6 +807,8 @@ Initial size of list of items being returned by "get".
 </div>
 <div class="memdoc">
 
+<p>
+Maximum length of a key. 
 <p>
 
 </div>
@@ -1094,6 +1121,8 @@ Initial size of list of CAS suffixes appended to "gets" lines.
 <div class="memdoc">
 
 <p>
+How long an object can reasonably be assumed to be locked before harvesting it on a low memory condition. 
+<p>
 
 </div>
 </div><p>
@@ -1175,6 +1204,16 @@ Initial size of list of CAS suffixes appended to "gets" lines.
 <div class="memdoc">
 
 <p>
+Callback for any function producing <a class="el" href="structstats.html" title="Global stats.">stats</a>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>key</em>&nbsp;</td><td>the stat's key </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>klen</em>&nbsp;</td><td>length of the key </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>val</em>&nbsp;</td><td>the stat's value in an ascii form (e.g. text form of a number) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>vlen</em>&nbsp;</td><td>length of the value  cookie magic callback cookie </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -1190,6 +1229,8 @@ Initial size of list of CAS suffixes appended to "gets" lines.
 <div class="memdoc">
 
 <p>
+The structure representing a connection into memcached. 
+<p>
 
 </div>
 </div><p>
@@ -1204,6 +1245,8 @@ Initial size of list of CAS suffixes appended to "gets" lines.
 </div>
 <div class="memdoc">
 
+<p>
+Structure for storing items within memcached. 
 <p>
 
 </div>
@@ -1275,34 +1318,32 @@ Smaller than time_t on 64-bit systems.
 <div class="memdoc">
 
 <p>
-NOTE: If you modify this table you _MUST_ update the function state_text. 
+Possible states of a connection. 
 <p>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa"></a><!-- doxytag: member="conn_listening" ref="397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa" args="" -->conn_listening</em>&nbsp;</td><td>
-</td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef"></a><!-- doxytag: member="conn_new_cmd" ref="397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef" args="" -->conn_new_cmd</em>&nbsp;</td><td>
 the socket which listens for connections </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6"></a><!-- doxytag: member="conn_waiting" ref="397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6" args="" -->conn_waiting</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef"></a><!-- doxytag: member="conn_new_cmd" ref="397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef" args="" -->conn_new_cmd</em>&nbsp;</td><td>
 Prepare connection for next command. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39"></a><!-- doxytag: member="conn_read" ref="397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39" args="" -->conn_read</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6"></a><!-- doxytag: member="conn_waiting" ref="397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6" args="" -->conn_waiting</em>&nbsp;</td><td>
 waiting for a readable socket </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4"></a><!-- doxytag: member="conn_parse_cmd" ref="397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4" args="" -->conn_parse_cmd</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39"></a><!-- doxytag: member="conn_read" ref="397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39" args="" -->conn_read</em>&nbsp;</td><td>
 reading in a command line </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594"></a><!-- doxytag: member="conn_write" ref="397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594" args="" -->conn_write</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4"></a><!-- doxytag: member="conn_parse_cmd" ref="397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4" args="" -->conn_parse_cmd</em>&nbsp;</td><td>
 try to parse a command from the input buffer </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9"></a><!-- doxytag: member="conn_nread" ref="397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9" args="" -->conn_nread</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594"></a><!-- doxytag: member="conn_write" ref="397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594" args="" -->conn_write</em>&nbsp;</td><td>
 writing out a simple response </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990"></a><!-- doxytag: member="conn_swallow" ref="397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990" args="" -->conn_swallow</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9"></a><!-- doxytag: member="conn_nread" ref="397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9" args="" -->conn_nread</em>&nbsp;</td><td>
 reading in a fixed number of bytes </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13"></a><!-- doxytag: member="conn_closing" ref="397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13" args="" -->conn_closing</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990"></a><!-- doxytag: member="conn_swallow" ref="397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990" args="" -->conn_swallow</em>&nbsp;</td><td>
 swallowing unnecessary bytes w/o storing </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca"></a><!-- doxytag: member="conn_mwrite" ref="397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca" args="" -->conn_mwrite</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13"></a><!-- doxytag: member="conn_closing" ref="397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13" args="" -->conn_closing</em>&nbsp;</td><td>
 closing this connection </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca"></a><!-- doxytag: member="conn_mwrite" ref="397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca" args="" -->conn_mwrite</em>&nbsp;</td><td>
+writing out many items sequentially </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d"></a><!-- doxytag: member="conn_max_state" ref="397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d" args="" -->conn_max_state</em>&nbsp;</td><td>
-writing out many items sequentially 
-<p>
-Max state value (used for assertion) </td></tr>
+Max state value (used for assertion). </td></tr>
 </table>
 </dl>
 
@@ -2642,7 +2683,7 @@ exported globals
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 10:13:06 2009 for memcached by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 15:08:22 2009 for memcached by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

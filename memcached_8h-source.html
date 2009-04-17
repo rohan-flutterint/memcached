@@ -21,421 +21,416 @@
   </div>
 <h1>memcached.h</h1><a href="memcached_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */</span>
 <a name="l00002"></a>00002 
-<a name="l00003"></a>00003 <span class="preprocessor">#ifdef HAVE_CONFIG_H</span>
-<a name="l00004"></a>00004 <span class="preprocessor"></span><span class="preprocessor">#include "<a class="code" href="config_8h.html">config.h</a>"</span>
-<a name="l00005"></a>00005 <span class="preprocessor">#endif</span>
-<a name="l00006"></a>00006 <span class="preprocessor"></span>
-<a name="l00007"></a>00007 <span class="preprocessor">#include &lt;sys/types.h&gt;</span>
-<a name="l00008"></a>00008 <span class="preprocessor">#include &lt;sys/socket.h&gt;</span>
-<a name="l00009"></a>00009 <span class="preprocessor">#include &lt;sys/time.h&gt;</span>
-<a name="l00010"></a>00010 <span class="preprocessor">#include &lt;netinet/in.h&gt;</span>
-<a name="l00011"></a>00011 <span class="preprocessor">#include &lt;event.h&gt;</span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &lt;netdb.h&gt;</span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;stdbool.h&gt;</span>
-<a name="l00014"></a>00014 <span class="preprocessor">#include &lt;stdint.h&gt;</span>
-<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;pthread.h&gt;</span>
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017 <span class="preprocessor">#include "<a class="code" href="protocol__binary_8h.html">protocol_binary.h</a>"</span>
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="comment">/* Maximum length of a key. */</span>
-<a name="l00020"></a><a class="code" href="memcached_8h.html#a5fda8abf3b5d8881d799a8b84091c6c">00020</a> <span class="preprocessor">#define KEY_MAX_LENGTH 250</span>
-<a name="l00021"></a>00021 <span class="preprocessor"></span>
-<a name="l00022"></a><a class="code" href="memcached_8h.html#b723c5f0e9759c70ed582dfd77431ff7">00022</a> <span class="preprocessor">#define DATA_BUFFER_SIZE 2048</span>
-<a name="l00023"></a><a class="code" href="memcached_8h.html#05df0398f9b0815a685d15f36fa809c7">00023</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_READ_BUFFER_SIZE 65536</span>
-<a name="l00024"></a><a class="code" href="memcached_8h.html#deea76d049af191b881f2d58eca532ca">00024</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_MAX_PAYLOAD_SIZE 1400</span>
-<a name="l00025"></a><a class="code" href="memcached_8h.html#8a0fae83e487dc04b3cd774b3d4ee637">00025</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_HEADER_SIZE 8</span>
-<a name="l00026"></a><a class="code" href="memcached_8h.html#39626d37ee23d63b65a51cced19569af">00026</a> <span class="preprocessor"></span><span class="preprocessor">#define MAX_SENDBUF_SIZE (256 * 1024 * 1024)</span>
-<a name="l00027"></a>00027 <span class="preprocessor"></span><span class="comment">/* I'm told the max length of a 64-bit num converted to string is 20 bytes.</span>
-<a name="l00028"></a>00028 <span class="comment"> * Plus a few for spaces, \r\n, \0 */</span>
-<a name="l00029"></a><a class="code" href="memcached_8h.html#c11cfc1c764d31993bf747dcb16c45c5">00029</a> <span class="preprocessor">#define SUFFIX_SIZE 24</span>
-<a name="l00030"></a>00030 <span class="preprocessor"></span>
-<a name="l00032"></a><a class="code" href="memcached_8h.html#67fead4b33f125ae7873422d8d8dcdfb">00032</a> <span class="preprocessor">#define ITEM_LIST_INITIAL 200</span>
-<a name="l00033"></a>00033 <span class="preprocessor"></span>
-<a name="l00035"></a><a class="code" href="memcached_8h.html#ad50a115f190cb796d5a25b910d62ac8">00035</a> <span class="preprocessor">#define SUFFIX_LIST_INITIAL 20</span>
-<a name="l00036"></a>00036 <span class="preprocessor"></span>
-<a name="l00038"></a><a class="code" href="memcached_8h.html#18ce3212ea76fbc1de1fe2d34f4b8c7e">00038</a> <span class="preprocessor">#define IOV_LIST_INITIAL 400</span>
-<a name="l00039"></a>00039 <span class="preprocessor"></span>
-<a name="l00041"></a><a class="code" href="memcached_8h.html#04e8d0719aba6a59ac6cb0b3ed202f95">00041</a> <span class="preprocessor">#define MSG_LIST_INITIAL 10</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span>
-<a name="l00044"></a><a class="code" href="memcached_8h.html#14d2f1d60a85984e1e0667cbefb620fc">00044</a> <span class="preprocessor">#define READ_BUFFER_HIGHWAT 8192</span>
-<a name="l00045"></a><a class="code" href="memcached_8h.html#d956eb982df5bd7acbda28c721b41eaa">00045</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_LIST_HIGHWAT 400</span>
-<a name="l00046"></a><a class="code" href="memcached_8h.html#caa0d98800d7b0731fe95772fe298bd0">00046</a> <span class="preprocessor"></span><span class="preprocessor">#define IOV_LIST_HIGHWAT 600</span>
-<a name="l00047"></a><a class="code" href="memcached_8h.html#78cce1eb067f697c57755dee6475f59d">00047</a> <span class="preprocessor"></span><span class="preprocessor">#define MSG_LIST_HIGHWAT 100</span>
-<a name="l00048"></a>00048 <span class="preprocessor"></span>
-<a name="l00049"></a>00049 <span class="comment">/* Binary protocol stuff */</span>
-<a name="l00050"></a><a class="code" href="memcached_8h.html#811c6b700b56f87244029a6136cedf29">00050</a> <span class="preprocessor">#define MIN_BIN_PKT_LENGTH 16</span>
-<a name="l00051"></a><a class="code" href="memcached_8h.html#52e0174a1089d9beba9b4007b96fd647">00051</a> <span class="preprocessor"></span><span class="preprocessor">#define BIN_PKT_HDR_WORDS (MIN_BIN_PKT_LENGTH/sizeof(uint32_t))</span>
-<a name="l00052"></a>00052 <span class="preprocessor"></span>
-<a name="l00053"></a>00053 <span class="comment">/* unistd.h is here */</span>
-<a name="l00054"></a>00054 <span class="preprocessor">#if HAVE_UNISTD_H</span>
-<a name="l00055"></a>00055 <span class="preprocessor"></span><span class="preprocessor"># include &lt;unistd.h&gt;</span>
-<a name="l00056"></a>00056 <span class="preprocessor">#endif</span>
+<a name="l00008"></a>00008 <span class="preprocessor">#ifdef HAVE_CONFIG_H</span>
+<a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#include "<a class="code" href="config_8h.html">config.h</a>"</span>
+<a name="l00010"></a>00010 <span class="preprocessor">#endif</span>
+<a name="l00011"></a>00011 <span class="preprocessor"></span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &lt;sys/types.h&gt;</span>
+<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;sys/socket.h&gt;</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#include &lt;sys/time.h&gt;</span>
+<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;netinet/in.h&gt;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include &lt;event.h&gt;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &lt;netdb.h&gt;</span>
+<a name="l00018"></a>00018 <span class="preprocessor">#include &lt;stdbool.h&gt;</span>
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;stdint.h&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;pthread.h&gt;</span>
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="preprocessor">#include "<a class="code" href="protocol__binary_8h.html">protocol_binary.h</a>"</span>
+<a name="l00023"></a>00023 
+<a name="l00025"></a><a class="code" href="memcached_8h.html#a5fda8abf3b5d8881d799a8b84091c6c">00025</a> <span class="preprocessor">#define KEY_MAX_LENGTH 250</span>
+<a name="l00026"></a>00026 <span class="preprocessor"></span>
+<a name="l00027"></a><a class="code" href="memcached_8h.html#b723c5f0e9759c70ed582dfd77431ff7">00027</a> <span class="preprocessor">#define DATA_BUFFER_SIZE 2048</span>
+<a name="l00028"></a><a class="code" href="memcached_8h.html#05df0398f9b0815a685d15f36fa809c7">00028</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_READ_BUFFER_SIZE 65536</span>
+<a name="l00029"></a><a class="code" href="memcached_8h.html#deea76d049af191b881f2d58eca532ca">00029</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_MAX_PAYLOAD_SIZE 1400</span>
+<a name="l00030"></a><a class="code" href="memcached_8h.html#8a0fae83e487dc04b3cd774b3d4ee637">00030</a> <span class="preprocessor"></span><span class="preprocessor">#define UDP_HEADER_SIZE 8</span>
+<a name="l00031"></a><a class="code" href="memcached_8h.html#39626d37ee23d63b65a51cced19569af">00031</a> <span class="preprocessor"></span><span class="preprocessor">#define MAX_SENDBUF_SIZE (256 * 1024 * 1024)</span>
+<a name="l00032"></a>00032 <span class="preprocessor"></span><span class="comment">/* I'm told the max length of a 64-bit num converted to string is 20 bytes.</span>
+<a name="l00033"></a>00033 <span class="comment"> * Plus a few for spaces, \r\n, \0 */</span>
+<a name="l00034"></a><a class="code" href="memcached_8h.html#c11cfc1c764d31993bf747dcb16c45c5">00034</a> <span class="preprocessor">#define SUFFIX_SIZE 24</span>
+<a name="l00035"></a>00035 <span class="preprocessor"></span>
+<a name="l00037"></a><a class="code" href="memcached_8h.html#67fead4b33f125ae7873422d8d8dcdfb">00037</a> <span class="preprocessor">#define ITEM_LIST_INITIAL 200</span>
+<a name="l00038"></a>00038 <span class="preprocessor"></span>
+<a name="l00040"></a><a class="code" href="memcached_8h.html#ad50a115f190cb796d5a25b910d62ac8">00040</a> <span class="preprocessor">#define SUFFIX_LIST_INITIAL 20</span>
+<a name="l00041"></a>00041 <span class="preprocessor"></span>
+<a name="l00043"></a><a class="code" href="memcached_8h.html#18ce3212ea76fbc1de1fe2d34f4b8c7e">00043</a> <span class="preprocessor">#define IOV_LIST_INITIAL 400</span>
+<a name="l00044"></a>00044 <span class="preprocessor"></span>
+<a name="l00046"></a><a class="code" href="memcached_8h.html#04e8d0719aba6a59ac6cb0b3ed202f95">00046</a> <span class="preprocessor">#define MSG_LIST_INITIAL 10</span>
+<a name="l00047"></a>00047 <span class="preprocessor"></span>
+<a name="l00049"></a><a class="code" href="memcached_8h.html#14d2f1d60a85984e1e0667cbefb620fc">00049</a> <span class="preprocessor">#define READ_BUFFER_HIGHWAT 8192</span>
+<a name="l00050"></a><a class="code" href="memcached_8h.html#d956eb982df5bd7acbda28c721b41eaa">00050</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_LIST_HIGHWAT 400</span>
+<a name="l00051"></a><a class="code" href="memcached_8h.html#caa0d98800d7b0731fe95772fe298bd0">00051</a> <span class="preprocessor"></span><span class="preprocessor">#define IOV_LIST_HIGHWAT 600</span>
+<a name="l00052"></a><a class="code" href="memcached_8h.html#78cce1eb067f697c57755dee6475f59d">00052</a> <span class="preprocessor"></span><span class="preprocessor">#define MSG_LIST_HIGHWAT 100</span>
+<a name="l00053"></a>00053 <span class="preprocessor"></span>
+<a name="l00054"></a>00054 <span class="comment">/* Binary protocol stuff */</span>
+<a name="l00055"></a><a class="code" href="memcached_8h.html#811c6b700b56f87244029a6136cedf29">00055</a> <span class="preprocessor">#define MIN_BIN_PKT_LENGTH 16</span>
+<a name="l00056"></a><a class="code" href="memcached_8h.html#52e0174a1089d9beba9b4007b96fd647">00056</a> <span class="preprocessor"></span><span class="preprocessor">#define BIN_PKT_HDR_WORDS (MIN_BIN_PKT_LENGTH/sizeof(uint32_t))</span>
 <a name="l00057"></a>00057 <span class="preprocessor"></span>
-<a name="l00058"></a>00058 <span class="comment">/* Slab sizing definitions. */</span>
-<a name="l00059"></a><a class="code" href="memcached_8h.html#3be25b5d15a433c400ec50d2c9d858b9">00059</a> <span class="preprocessor">#define POWER_SMALLEST 1</span>
-<a name="l00060"></a><a class="code" href="memcached_8h.html#0f6e848eba50c148da7a61eb94061c3c">00060</a> <span class="preprocessor"></span><span class="preprocessor">#define POWER_LARGEST  200</span>
-<a name="l00061"></a><a class="code" href="memcached_8h.html#1000923632a496e81e50102c2694db41">00061</a> <span class="preprocessor"></span><span class="preprocessor">#define POWER_BLOCK 1048576</span>
-<a name="l00062"></a><a class="code" href="memcached_8h.html#8cd56df53d2341debe15fafe411515a6">00062</a> <span class="preprocessor"></span><span class="preprocessor">#define CHUNK_ALIGN_BYTES 8</span>
-<a name="l00063"></a><a class="code" href="memcached_8h.html#d6e30718df50c9991afd87dc619c851f">00063</a> <span class="preprocessor"></span><span class="preprocessor">#define DONT_PREALLOC_SLABS</span>
-<a name="l00064"></a><a class="code" href="memcached_8h.html#e8e332c92e566cf3b38a8a7e3d08eafe">00064</a> <span class="preprocessor"></span><span class="preprocessor">#define MAX_NUMBER_OF_SLAB_CLASSES (POWER_LARGEST + 1)</span>
-<a name="l00065"></a>00065 <span class="preprocessor"></span>
-<a name="l00066"></a>00066 <span class="comment">/* How long an object can reasonably be assumed to be locked before</span>
-<a name="l00067"></a>00067 <span class="comment">   harvesting it on a low memory condition. */</span>
-<a name="l00068"></a><a class="code" href="memcached_8h.html#421b08fd9fc3d24db6d39014c02f66bb">00068</a> <span class="preprocessor">#define TAIL_REPAIR_TIME (3 * 3600)</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>
-<a name="l00071"></a><a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4">00071</a> <span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>;
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073 <span class="comment">/* Stats stored per slab (and per thread). */</span>
-<a name="l00074"></a><a class="code" href="structslab__stats.html">00074</a> <span class="keyword">struct </span><a class="code" href="structslab__stats.html">slab_stats</a> {
-<a name="l00075"></a><a class="code" href="structslab__stats.html#4da67cc4f2297d79e69e3805f42c90b7">00075</a>     uint64_t  <a class="code" href="structslab__stats.html#4da67cc4f2297d79e69e3805f42c90b7">set_cmds</a>;
-<a name="l00076"></a><a class="code" href="structslab__stats.html#7bc073fa35375d23129eab883ff2b633">00076</a>     uint64_t  <a class="code" href="structslab__stats.html#7bc073fa35375d23129eab883ff2b633">get_hits</a>;
-<a name="l00077"></a><a class="code" href="structslab__stats.html#269423b43063e97b7ecdd16347f38cb4">00077</a>     uint64_t  <a class="code" href="structslab__stats.html#269423b43063e97b7ecdd16347f38cb4">delete_hits</a>;
-<a name="l00078"></a><a class="code" href="structslab__stats.html#391924745fcae79874c492f9db29f6e5">00078</a>     uint64_t  <a class="code" href="structslab__stats.html#391924745fcae79874c492f9db29f6e5">cas_hits</a>;
-<a name="l00079"></a><a class="code" href="structslab__stats.html#f7dc635cd3086d46d93cfd44e3a6c3e7">00079</a>     uint64_t  <a class="code" href="structslab__stats.html#f7dc635cd3086d46d93cfd44e3a6c3e7">cas_badval</a>;
-<a name="l00080"></a><a class="code" href="structslab__stats.html#a184357792689748e228095f17f9e83c">00080</a>     uint64_t  <a class="code" href="structslab__stats.html#a184357792689748e228095f17f9e83c">incr_hits</a>;
-<a name="l00081"></a><a class="code" href="structslab__stats.html#08355226ee7038716958682338fdbdda">00081</a>     uint64_t  <a class="code" href="structslab__stats.html#08355226ee7038716958682338fdbdda">decr_hits</a>;
-<a name="l00082"></a>00082 };
-<a name="l00083"></a>00083 
-<a name="l00084"></a><a class="code" href="structthread__stats.html">00084</a> <span class="keyword">struct </span><a class="code" href="structthread__stats.html">thread_stats</a> {
-<a name="l00085"></a><a class="code" href="structthread__stats.html#656e2f3c52c764e6bbba2c8de29ae812">00085</a>     pthread_mutex_t   <a class="code" href="structthread__stats.html#656e2f3c52c764e6bbba2c8de29ae812">mutex</a>;
-<a name="l00086"></a><a class="code" href="structthread__stats.html#ffa01fa8b4974f4839122424c1bb2fc3">00086</a>     uint64_t          <a class="code" href="structthread__stats.html#ffa01fa8b4974f4839122424c1bb2fc3">get_cmds</a>;
-<a name="l00087"></a><a class="code" href="structthread__stats.html#cc592fd8da9cdd9a227c59f8ba346fb5">00087</a>     uint64_t          <a class="code" href="structthread__stats.html#cc592fd8da9cdd9a227c59f8ba346fb5">get_misses</a>;
-<a name="l00088"></a><a class="code" href="structthread__stats.html#eb08e5cab194e1337007464c42fbbbdf">00088</a>     uint64_t          <a class="code" href="structthread__stats.html#eb08e5cab194e1337007464c42fbbbdf">delete_misses</a>;
-<a name="l00089"></a><a class="code" href="structthread__stats.html#9d783773df9a1163f1475fe10e4d2838">00089</a>     uint64_t          <a class="code" href="structthread__stats.html#9d783773df9a1163f1475fe10e4d2838">incr_misses</a>;
-<a name="l00090"></a><a class="code" href="structthread__stats.html#f5376d1206b9e71cbff2dab81e930d28">00090</a>     uint64_t          <a class="code" href="structthread__stats.html#f5376d1206b9e71cbff2dab81e930d28">decr_misses</a>;
-<a name="l00091"></a><a class="code" href="structthread__stats.html#daaed26081651c8236b1cc5b4f4748ec">00091</a>     uint64_t          <a class="code" href="structthread__stats.html#daaed26081651c8236b1cc5b4f4748ec">cas_misses</a>;
-<a name="l00092"></a><a class="code" href="structthread__stats.html#78b389a507be8c78d2757b79c6b2069d">00092</a>     uint64_t          <a class="code" href="structthread__stats.html#78b389a507be8c78d2757b79c6b2069d">bytes_read</a>;
-<a name="l00093"></a><a class="code" href="structthread__stats.html#fff437fd1fcac940ffd2fa44d3182838">00093</a>     uint64_t          <a class="code" href="structthread__stats.html#fff437fd1fcac940ffd2fa44d3182838">bytes_written</a>;
-<a name="l00094"></a><a class="code" href="structthread__stats.html#8f4915ca2892f21641a126951660b625">00094</a>     uint64_t          <a class="code" href="structthread__stats.html#8f4915ca2892f21641a126951660b625">flush_cmds</a>;
-<a name="l00095"></a><a class="code" href="structthread__stats.html#efc242998efe6318a32510565acbcb01">00095</a>     <span class="keyword">struct </span><a class="code" href="structslab__stats.html">slab_stats</a> <a class="code" href="structslab__stats.html">slab_stats</a>[<a class="code" href="memcached_8h.html#e8e332c92e566cf3b38a8a7e3d08eafe">MAX_NUMBER_OF_SLAB_CLASSES</a>];
-<a name="l00096"></a>00096 };
-<a name="l00097"></a>00097 
-<a name="l00098"></a><a class="code" href="structstats.html">00098</a> <span class="keyword">struct </span><a class="code" href="structstats.html">stats</a> {
-<a name="l00099"></a><a class="code" href="structstats.html#a1da24a4ab04ced93a99433d2914ed96">00099</a>     pthread_mutex_t <a class="code" href="structstats.html#a1da24a4ab04ced93a99433d2914ed96">mutex</a>;
-<a name="l00100"></a><a class="code" href="structstats.html#7e27973d723b2bb83265f1324b6265d5">00100</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#7e27973d723b2bb83265f1324b6265d5">curr_items</a>;
-<a name="l00101"></a><a class="code" href="structstats.html#f4feaf763564d06ef80569941f31b641">00101</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#f4feaf763564d06ef80569941f31b641">total_items</a>;
-<a name="l00102"></a><a class="code" href="structstats.html#16d174f23f4b8e48c3dc2557f2db7750">00102</a>     uint64_t      <a class="code" href="structstats.html#16d174f23f4b8e48c3dc2557f2db7750">curr_bytes</a>;
-<a name="l00103"></a><a class="code" href="structstats.html#1c0edacbfc2610977c9d1c6a675be6bb">00103</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#1c0edacbfc2610977c9d1c6a675be6bb">curr_conns</a>;
-<a name="l00104"></a><a class="code" href="structstats.html#4b4ee0d2ac0f6c34246f459cb9af20cd">00104</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#4b4ee0d2ac0f6c34246f459cb9af20cd">total_conns</a>;
-<a name="l00105"></a><a class="code" href="structstats.html#444566021e240f7552b946e7516d6ebe">00105</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#444566021e240f7552b946e7516d6ebe">conn_structs</a>;
-<a name="l00106"></a><a class="code" href="structstats.html#990bacf5404f31f17a6dafc465a2b775">00106</a>     uint64_t      <a class="code" href="structstats.html#990bacf5404f31f17a6dafc465a2b775">get_cmds</a>;
-<a name="l00107"></a><a class="code" href="structstats.html#53ccb9f0a724b936ad00f9af020dd6a0">00107</a>     uint64_t      <a class="code" href="structstats.html#53ccb9f0a724b936ad00f9af020dd6a0">set_cmds</a>;
-<a name="l00108"></a><a class="code" href="structstats.html#12c881743d5b3afd0a4ab18b29a413c9">00108</a>     uint64_t      <a class="code" href="structstats.html#12c881743d5b3afd0a4ab18b29a413c9">get_hits</a>;
-<a name="l00109"></a><a class="code" href="structstats.html#1802ea50eb0aab84ab3e923dd53d294e">00109</a>     uint64_t      <a class="code" href="structstats.html#1802ea50eb0aab84ab3e923dd53d294e">get_misses</a>;
-<a name="l00110"></a><a class="code" href="structstats.html#cecd3ccfa807a4fb7deb5be5e174a6fc">00110</a>     uint64_t      <a class="code" href="structstats.html#cecd3ccfa807a4fb7deb5be5e174a6fc">evictions</a>;
-<a name="l00111"></a><a class="code" href="structstats.html#baf2f10d93dcc5aef7c8ca46c3c52e0b">00111</a>     time_t        <a class="code" href="structstats.html#baf2f10d93dcc5aef7c8ca46c3c52e0b">started</a>;          <span class="comment">/* when the process was started */</span>
-<a name="l00112"></a><a class="code" href="structstats.html#ed0a44d59a6fc1d01dca4639414905a0">00112</a>     <span class="keywordtype">bool</span>          <a class="code" href="structstats.html#ed0a44d59a6fc1d01dca4639414905a0">accepting_conns</a>;  <span class="comment">/* whether we are currently accepting */</span>
-<a name="l00113"></a><a class="code" href="structstats.html#7cce50f30bfeebca79e4fb3c36def765">00113</a>     uint64_t      <a class="code" href="structstats.html#7cce50f30bfeebca79e4fb3c36def765">listen_disabled_num</a>;
-<a name="l00114"></a>00114 };
-<a name="l00115"></a>00115 
-<a name="l00116"></a><a class="code" href="memcached_8h.html#6d56e2cd35fd2a8391a19abba528f353">00116</a> <span class="preprocessor">#define MAX_VERBOSITY_LEVEL 2</span>
-<a name="l00117"></a>00117 <span class="preprocessor"></span>
-<a name="l00118"></a>00118 <span class="comment">/* When adding a setting, be sure to update process_stat_settings */</span>
-<a name="l00119"></a><a class="code" href="structsettings.html">00119</a> <span class="keyword">struct </span><a class="code" href="structsettings.html">settings</a> {
-<a name="l00120"></a><a class="code" href="structsettings.html#9e462ca2f9a0531d782cd24f2e51354f">00120</a>     <span class="keywordtype">size_t</span> <a class="code" href="structsettings.html#9e462ca2f9a0531d782cd24f2e51354f">maxbytes</a>;
-<a name="l00121"></a><a class="code" href="structsettings.html#661321f255edb678a4b8a52e909b4acf">00121</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#661321f255edb678a4b8a52e909b4acf">maxconns</a>;
-<a name="l00122"></a><a class="code" href="structsettings.html#20fa1e33e54d255f4f5e3df2da3e64ef">00122</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#20fa1e33e54d255f4f5e3df2da3e64ef">port</a>;
-<a name="l00123"></a><a class="code" href="structsettings.html#1a574901d729a109bd3156885c96e37e">00123</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#1a574901d729a109bd3156885c96e37e">udpport</a>;
-<a name="l00124"></a><a class="code" href="structsettings.html#3077457f2ff945dbc779ec42c44dfb08">00124</a>     <span class="keywordtype">char</span> *<a class="code" href="structsettings.html#3077457f2ff945dbc779ec42c44dfb08">inter</a>;
-<a name="l00125"></a><a class="code" href="structsettings.html#8cfab16abb0cfc28ce1244c48bacdb6e">00125</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#8cfab16abb0cfc28ce1244c48bacdb6e">verbose</a>;
-<a name="l00126"></a><a class="code" href="structsettings.html#df482d13739658b54ac96c6eadba8bc6">00126</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> <a class="code" href="structsettings.html#df482d13739658b54ac96c6eadba8bc6">oldest_live</a>; <span class="comment">/* ignore existing items older than this */</span>
-<a name="l00127"></a><a class="code" href="structsettings.html#d168c4ce8bca42ce8f7b0ba8b66fba1a">00127</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#d168c4ce8bca42ce8f7b0ba8b66fba1a">evict_to_free</a>;
-<a name="l00128"></a><a class="code" href="structsettings.html#4c283e7be93d2eb0e7af366abc360ba7">00128</a>     <span class="keywordtype">char</span> *<a class="code" href="structsettings.html#4c283e7be93d2eb0e7af366abc360ba7">socketpath</a>;   <span class="comment">/* path to unix socket if using local socket */</span>
-<a name="l00129"></a><a class="code" href="structsettings.html#f277fc65f2ad1e28b75305e1b4366b8a">00129</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#f277fc65f2ad1e28b75305e1b4366b8a">access</a>;  <span class="comment">/* access mask (a la chmod) for unix domain socket */</span>
-<a name="l00130"></a><a class="code" href="structsettings.html#a0c4be9f40fe18de45a3ee9bb9fda8a6">00130</a>     <span class="keywordtype">double</span> <a class="code" href="structsettings.html#a0c4be9f40fe18de45a3ee9bb9fda8a6">factor</a>;          <span class="comment">/* chunk size growth factor */</span>
-<a name="l00131"></a><a class="code" href="structsettings.html#59bb385a05df23defc39f23a4b95b2be">00131</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#59bb385a05df23defc39f23a4b95b2be">chunk_size</a>;
-<a name="l00132"></a><a class="code" href="structsettings.html#b7886bf6034656be4f274719e2f6c4a1">00132</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#b7886bf6034656be4f274719e2f6c4a1">num_threads</a>;        <span class="comment">/* number of libevent threads to run */</span>
-<a name="l00133"></a><a class="code" href="structsettings.html#3f7e4aa1d7561b994111a9e47f82f1bb">00133</a>     <span class="keywordtype">char</span> <a class="code" href="structsettings.html#3f7e4aa1d7561b994111a9e47f82f1bb">prefix_delimiter</a>;  <span class="comment">/* character that marks a key prefix (for stats) */</span>
-<a name="l00134"></a><a class="code" href="structsettings.html#b49cd2e86b9b26f407fe76569560a9df">00134</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#b49cd2e86b9b26f407fe76569560a9df">detail_enabled</a>;     <span class="comment">/* nonzero if we're collecting detailed stats */</span>
-<a name="l00135"></a><a class="code" href="structsettings.html#85ffd37171524861e0e384bb5c607e17">00135</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#85ffd37171524861e0e384bb5c607e17">reqs_per_event</a>;     <span class="comment">/* Maximum number of io to process on each</span>
-<a name="l00136"></a>00136 <span class="comment">                               io-event. */</span>
-<a name="l00137"></a><a class="code" href="structsettings.html#df2782217e9e89322915fb32fee95880">00137</a>     <span class="keywordtype">bool</span> <a class="code" href="structsettings.html#df2782217e9e89322915fb32fee95880">use_cas</a>;
-<a name="l00138"></a><a class="code" href="structsettings.html#f38c63a2526c784f539575bf15525ca2">00138</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#f38c63a2526c784f539575bf15525ca2">backlog</a>;
-<a name="l00139"></a>00139 };
-<a name="l00140"></a>00140 
-<a name="l00141"></a>00141 <span class="keyword">extern</span> <span class="keyword">struct </span><a class="code" href="structstats.html">stats</a> <a class="code" href="structstats.html">stats</a>;
-<a name="l00142"></a>00142 <span class="keyword">extern</span> time_t <a class="code" href="memcached_8c.html#584cbee39bbab65f2c8d87932cf92140">process_started</a>;
-<a name="l00143"></a>00143 <span class="keyword">extern</span> <span class="keyword">struct </span><a class="code" href="structsettings.html">settings</a> <a class="code" href="structsettings.html">settings</a>;
-<a name="l00144"></a>00144 
-<a name="l00145"></a><a class="code" href="memcached_8h.html#0fdfa9fdfdd2d9cd25d7bd7ad6033e03">00145</a> <span class="preprocessor">#define ITEM_LINKED 1</span>
-<a name="l00146"></a><a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">00146</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_CAS 2</span>
-<a name="l00147"></a>00147 <span class="preprocessor"></span>
-<a name="l00148"></a>00148 <span class="comment">/* temp */</span>
-<a name="l00149"></a><a class="code" href="memcached_8h.html#0eac12291582819219bf0f6ce9124364">00149</a> <span class="preprocessor">#define ITEM_SLABBED 4</span>
-<a name="l00150"></a>00150 <span class="preprocessor"></span>
-<a name="l00151"></a><a class="code" href="struct__stritem.html">00151</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__stritem.html">_stritem</a> {
-<a name="l00152"></a><a class="code" href="struct__stritem.html#d7f5d4ca7eae6391b02a8e0d95c99b87">00152</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html">_stritem</a> *<a class="code" href="struct__stritem.html#d7f5d4ca7eae6391b02a8e0d95c99b87">next</a>;
-<a name="l00153"></a><a class="code" href="struct__stritem.html#fcc1decef9e8c41fb64f4995462a08fa">00153</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html">_stritem</a> *<a class="code" href="struct__stritem.html#fcc1decef9e8c41fb64f4995462a08fa">prev</a>;
-<a name="l00154"></a><a class="code" href="struct__stritem.html#cc3bc0ca62146131ad8ae8518545e11b">00154</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html">_stritem</a> *<a class="code" href="struct__stritem.html#cc3bc0ca62146131ad8ae8518545e11b">h_next</a>;    <span class="comment">/* hash chain next */</span>
-<a name="l00155"></a><a class="code" href="struct__stritem.html#7953b640eea943ce42644c00136cd462">00155</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>      <a class="code" href="struct__stritem.html#7953b640eea943ce42644c00136cd462">time</a>;       <span class="comment">/* least recent access */</span>
-<a name="l00156"></a><a class="code" href="struct__stritem.html#fd87174e4e2f16bf48a950ff28ba65d4">00156</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>      <a class="code" href="struct__stritem.html#fd87174e4e2f16bf48a950ff28ba65d4">exptime</a>;    <span class="comment">/* expire time */</span>
-<a name="l00157"></a><a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">00157</a>     <span class="keywordtype">int</span>             <a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">nbytes</a>;     <span class="comment">/* size of data */</span>
-<a name="l00158"></a><a class="code" href="struct__stritem.html#f4b10743e972c424f170f3bbc277ded5">00158</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>  <a class="code" href="struct__stritem.html#f4b10743e972c424f170f3bbc277ded5">refcount</a>;
-<a name="l00159"></a><a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">00159</a>     uint8_t         <a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">nsuffix</a>;    <span class="comment">/* length of flags-and-length string */</span>
-<a name="l00160"></a><a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">00160</a>     uint8_t         <a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a>;   <span class="comment">/* ITEM_* above */</span>
-<a name="l00161"></a><a class="code" href="struct__stritem.html#2b9111cab21baa2ee90bd8866e7be988">00161</a>     uint8_t         <a class="code" href="struct__stritem.html#2b9111cab21baa2ee90bd8866e7be988">slabs_clsid</a>;<span class="comment">/* which slab class we're in */</span>
-<a name="l00162"></a><a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">00162</a>     uint8_t         <a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">nkey</a>;       <span class="comment">/* key length, w/terminating null and padding */</span>
-<a name="l00163"></a><a class="code" href="struct__stritem.html#c6f2eb9984981d107d1e339cad333f50">00163</a>     <span class="keywordtype">void</span> * <a class="code" href="struct__stritem.html#c6f2eb9984981d107d1e339cad333f50">end</a>[];
-<a name="l00164"></a>00164     <span class="comment">/* if it_flags &amp; ITEM_CAS we have 8 bytes CAS */</span>
-<a name="l00165"></a>00165     <span class="comment">/* then null-terminated key */</span>
-<a name="l00166"></a>00166     <span class="comment">/* then " flags length\r\n" (no terminating null) */</span>
-<a name="l00167"></a>00167     <span class="comment">/* then data with terminating \r\n (no terminating null; it's binary!) */</span>
-<a name="l00168"></a>00168 } <a class="code" href="struct__stritem.html">item</a>;
-<a name="l00169"></a>00169 
-<a name="l00170"></a>00170 <span class="comment">/* warning: don't use these macros with a function, as it evals its arg twice */</span>
-<a name="l00171"></a><a class="code" href="memcached_8h.html#b8e3564ae343cbe6a61e7d277fe0d849">00171</a> <span class="preprocessor">#define ITEM_get_cas(i) ((uint64_t)(((i)-&gt;it_flags &amp; ITEM_CAS) ? \</span>
-<a name="l00172"></a>00172 <span class="preprocessor">                                    *(uint64_t*)&amp;((i)-&gt;end[0]) : 0x0))</span>
-<a name="l00173"></a><a class="code" href="memcached_8h.html#906a01f2020378ebc543f3fac3a8de5c">00173</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_set_cas(i,v) { if ((i)-&gt;it_flags &amp; ITEM_CAS) { \</span>
-<a name="l00174"></a>00174 <span class="preprocessor">                          *(uint64_t*)&amp;((i)-&gt;end[0]) = v; } }</span>
-<a name="l00175"></a>00175 <span class="preprocessor"></span>
-<a name="l00176"></a><a class="code" href="memcached_8h.html#6f0bbc1b60dc6d44e4f33b7072c5c556">00176</a> <span class="preprocessor">#define ITEM_key(item) (((char*)&amp;((item)-&gt;end[0])) \</span>
-<a name="l00177"></a>00177 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
-<a name="l00178"></a>00178 <span class="preprocessor"></span>
-<a name="l00179"></a><a class="code" href="memcached_8h.html#cc9266e9b04daa12e359eb6d6f052fc3">00179</a> <span class="preprocessor">#define ITEM_suffix(item) ((char*) &amp;((item)-&gt;end[0]) + (item)-&gt;nkey + 1 \</span>
-<a name="l00180"></a>00180 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
-<a name="l00181"></a>00181 <span class="preprocessor"></span>
-<a name="l00182"></a><a class="code" href="memcached_8h.html#442889c7cb5c1ec39981f299331b4b29">00182</a> <span class="preprocessor">#define ITEM_data(item) ((char*) &amp;((item)-&gt;end[0]) + (item)-&gt;nkey + 1 \</span>
-<a name="l00183"></a>00183 <span class="preprocessor">         + (item)-&gt;nsuffix \</span>
-<a name="l00184"></a>00184 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
-<a name="l00185"></a>00185 <span class="preprocessor"></span>
-<a name="l00186"></a><a class="code" href="memcached_8h.html#5c9d5467cfb934e32d0794afc596fded">00186</a> <span class="preprocessor">#define ITEM_ntotal(item) (sizeof(struct _stritem) + (item)-&gt;nkey + 1 \</span>
-<a name="l00187"></a>00187 <span class="preprocessor">         + (item)-&gt;nsuffix + (item)-&gt;nbytes \</span>
-<a name="l00188"></a>00188 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
-<a name="l00189"></a>00189 <span class="preprocessor"></span>
-<a name="l00190"></a>00190 <span class="comment">/* Append a simple stat with a stat name, value format and value */</span>
-<a name="l00191"></a><a class="code" href="memcached_8h.html#76c2c7de1009374de65513d72f6e3e56">00191</a> <span class="preprocessor">#define APPEND_STAT(name, fmt, val) \</span>
-<a name="l00192"></a>00192 <span class="preprocessor">    append_stat(name, add_stats, c, fmt, val);</span>
-<a name="l00193"></a>00193 <span class="preprocessor"></span>
-<a name="l00194"></a>00194 <span class="comment">/* Append an indexed stat with a stat name (with format), value format</span>
-<a name="l00195"></a>00195 <span class="comment">   and value */</span>
-<a name="l00196"></a><a class="code" href="memcached_8h.html#30ab71365faf0a05119b4705e26d81a8">00196</a> <span class="preprocessor">#define APPEND_NUM_FMT_STAT(name_fmt, num, name, fmt, val)   \</span>
-<a name="l00197"></a>00197 <span class="preprocessor">    klen = sprintf(key_str, name_fmt, num, name);            \</span>
-<a name="l00198"></a>00198 <span class="preprocessor">    vlen = sprintf(val_str, fmt, val);                       \</span>
-<a name="l00199"></a>00199 <span class="preprocessor">    add_stats(key_str, klen, val_str, vlen, c);</span>
-<a name="l00200"></a>00200 <span class="preprocessor"></span>
-<a name="l00201"></a>00201 <span class="comment">/* Common APPEND_NUM_FMT_STAT format. */</span>
-<a name="l00202"></a><a class="code" href="memcached_8h.html#be2689982c5b4d28c7eb6151710f404d">00202</a> <span class="preprocessor">#define APPEND_NUM_STAT(num, name, fmt, val) \</span>
-<a name="l00203"></a>00203 <span class="preprocessor">    APPEND_NUM_FMT_STAT("%d:%s", num, name, fmt, val)</span>
-<a name="l00204"></a>00204 <span class="preprocessor"></span>
-<a name="l00205"></a><a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">00205</a> <span class="keyword">typedef</span> void (*<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a>)(<span class="keyword">const</span> <span class="keywordtype">char</span> *key, <span class="keyword">const</span> uint16_t klen,
-<a name="l00206"></a>00206                          <span class="keyword">const</span> <span class="keywordtype">char</span> *val, <span class="keyword">const</span> uint32_t vlen,
-<a name="l00207"></a>00207                          <span class="keyword">const</span> <span class="keywordtype">void</span> *cookie);
-<a name="l00208"></a>00208 
-<a name="l00212"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7">00212</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="NOTE: If you modify this table you _MUST_ update the function state_text.">conn_states</a> {
-<a name="l00213"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa">00213</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa">conn_listening</a>,  
-<a name="l00214"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef">00214</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef" title="the socket which listens for connections">conn_new_cmd</a>,    
-<a name="l00215"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6">00215</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6" title="Prepare connection for next command.">conn_waiting</a>,    
-<a name="l00216"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39">00216</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39" title="waiting for a readable socket">conn_read</a>,       
-<a name="l00217"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4">00217</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4" title="reading in a command line">conn_parse_cmd</a>,  
-<a name="l00218"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594">00218</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594" title="try to parse a command from the input buffer">conn_write</a>,      
-<a name="l00219"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9">00219</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9" title="writing out a simple response">conn_nread</a>,      
-<a name="l00220"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990">00220</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990" title="reading in a fixed number of bytes">conn_swallow</a>,    
-<a name="l00221"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13">00221</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13" title="swallowing unnecessary bytes w/o storing">conn_closing</a>,    
-<a name="l00222"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca">00222</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca" title="closing this connection">conn_mwrite</a>,     
-<a name="l00223"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d">00223</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d" title="writing out many items sequentially">conn_max_state</a>  
-<a name="l00224"></a>00224 };
-<a name="l00225"></a>00225 
-<a name="l00226"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">00226</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">bin_substates</a> {
-<a name="l00227"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7cef6c433a3f788f6496712ff3863ed81">00227</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7cef6c433a3f788f6496712ff3863ed81">bin_no_state</a>,
-<a name="l00228"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c79ab816e3175ec539a708893697ccb9d8">00228</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c79ab816e3175ec539a708893697ccb9d8">bin_reading_set_header</a>,
-<a name="l00229"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c73e3d8313972488ac21259efabdc55e6b">00229</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c73e3d8313972488ac21259efabdc55e6b">bin_reading_cas_header</a>,
-<a name="l00230"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7d06ff8b91c2992cc00a729781a27a60b">00230</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7d06ff8b91c2992cc00a729781a27a60b">bin_read_set_value</a>,
-<a name="l00231"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c71475f54a5df58e452a485e0fdece93dc">00231</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c71475f54a5df58e452a485e0fdece93dc">bin_reading_get_key</a>,
-<a name="l00232"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7e16889ae613bfb54c7b620a8ffc4155b">00232</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7e16889ae613bfb54c7b620a8ffc4155b">bin_reading_stat</a>,
-<a name="l00233"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7ed8eb46134a61812268a752a532686d7">00233</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7ed8eb46134a61812268a752a532686d7">bin_reading_del_header</a>,
-<a name="l00234"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c711010d81960b20927d416a9ff93400d2">00234</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c711010d81960b20927d416a9ff93400d2">bin_reading_incr_header</a>,
-<a name="l00235"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7a4f0970d48aa5e8389a987a590f51fd1">00235</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7a4f0970d48aa5e8389a987a590f51fd1">bin_read_flush_exptime</a>
-<a name="l00236"></a>00236 };
-<a name="l00237"></a>00237 
-<a name="l00238"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">00238</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> {
-<a name="l00239"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd4ea4e26ca73d727186948986255b7ee1">00239</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd4ea4e26ca73d727186948986255b7ee1">ascii_prot</a> = 3, <span class="comment">/* arbitrary value. */</span>
-<a name="l00240"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd013efd3024d75e93d9fbd7109e387ac5">00240</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd013efd3024d75e93d9fbd7109e387ac5">ascii_udp_prot</a>,
-<a name="l00241"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cda690b1bac2d1cb639ad1cae78b34e00a">00241</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cda690b1bac2d1cb639ad1cae78b34e00a">binary_prot</a>,
-<a name="l00242"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cdf80e49eae5478cb0ec774eb4c6f691e5">00242</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cdf80e49eae5478cb0ec774eb4c6f691e5">negotiating_prot</a> <span class="comment">/* Discovering the protocol */</span>
-<a name="l00243"></a>00243 };
-<a name="l00244"></a>00244 
-<a name="l00245"></a><a class="code" href="memcached_8h.html#e7d628501377024bde05056f4af112bb">00245</a> <span class="preprocessor">#define IS_UDP(x) (x == ascii_udp_prot)</span>
-<a name="l00246"></a>00246 <span class="preprocessor"></span>
-<a name="l00247"></a><a class="code" href="memcached_8h.html#2beaf4cbf661902595987c951dca81b5">00247</a> <span class="preprocessor">#define NREAD_ADD 1</span>
-<a name="l00248"></a><a class="code" href="memcached_8h.html#fbe0384d1c4c682750a250c53a4360b6">00248</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_SET 2</span>
-<a name="l00249"></a><a class="code" href="memcached_8h.html#cf25e0ecbffb495dfedf760dde07d729">00249</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_REPLACE 3</span>
-<a name="l00250"></a><a class="code" href="memcached_8h.html#ceae72061dd3619d8fb95e33bae0b8e8">00250</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_APPEND 4</span>
-<a name="l00251"></a><a class="code" href="memcached_8h.html#fbaf99dc7e4b0e86f91e8e44da33a5c1">00251</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_PREPEND 5</span>
-<a name="l00252"></a><a class="code" href="memcached_8h.html#efa2deecfd52be7f36ed92e857a5a134">00252</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_CAS 6</span>
-<a name="l00253"></a>00253 <span class="preprocessor"></span>
-<a name="l00254"></a><a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">00254</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> {
-<a name="l00255"></a><a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e77647f28a49007bb2c1f10fa36f33b55">00255</a>     <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18ef7ef7e30a1b86cc3ffae6fa876110d66">NOT_STORED</a>=0, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e77647f28a49007bb2c1f10fa36f33b55">STORED</a>, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e3197625a1bb2264943f5a95f236d9973">EXISTS</a>, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18ecdaa2919bac56fe1090eb3dbb9526472">NOT_FOUND</a>
-<a name="l00256"></a>00256 };
-<a name="l00257"></a>00257 
-<a name="l00258"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">00258</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
-<a name="l00259"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#b491d0e009031a4266f9f81e96129309">00259</a>     pthread_t thread_id;        <span class="comment">/* unique ID of this thread */</span>
-<a name="l00260"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#edc60f547936f4659d10c690f5eeeada">00260</a>     <span class="keyword">struct </span>event_base *base;    <span class="comment">/* libevent handle this thread uses */</span>
-<a name="l00261"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#a291c9fc61c0ae2e403aa8feeaa59094">00261</a>     <span class="keyword">struct </span>event notify_event;  <span class="comment">/* listen event for notify pipe */</span>
-<a name="l00262"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#01d0d9093c0f04bda0656d0aa6f170e9">00262</a>     <span class="keywordtype">int</span> notify_receive_fd;      <span class="comment">/* receiving end of notify pipe */</span>
-<a name="l00263"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#d53e4c5a53ae00ed1f08d8476981c36b">00263</a>     <span class="keywordtype">int</span> notify_send_fd;         <span class="comment">/* sending end of notify pipe */</span>
-<a name="l00264"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#b81f0ce2ef093d3d50c78d51ab5d4c8c">00264</a>     <span class="keyword">struct </span><a class="code" href="structthread__stats.html">thread_stats</a> <a class="code" href="structstats.html">stats</a>;  <span class="comment">/* Stats generated by this thread */</span>
-<a name="l00265"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#79dc836742346c8db838951b2d6f46c5">00265</a>     <span class="keyword">struct </span><a class="code" href="structconn__queue.html">conn_queue</a> *new_conn_queue; <span class="comment">/* queue of new connections to handle */</span>
-<a name="l00266"></a>00266 } <a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">LIBEVENT_THREAD</a>;
-<a name="l00267"></a>00267 
-<a name="l00268"></a><a class="code" href="memcached_8h.html#6b845d48e30cbb66add29598de2e00a6">00268</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structconn.html">conn</a> <a class="code" href="structconn.html">conn</a>;
-<a name="l00269"></a><a class="code" href="structconn.html">00269</a> <span class="keyword">struct </span><a class="code" href="structconn.html">conn</a> {
-<a name="l00270"></a><a class="code" href="structconn.html#37f7969ba27e8ae9461a1d3b378351d6">00270</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#37f7969ba27e8ae9461a1d3b378351d6">sfd</a>;
-<a name="l00271"></a><a class="code" href="structconn.html#17e40cc90c3669ee5e50df2ded95c3d0">00271</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="NOTE: If you modify this table you _MUST_ update the function state_text.">conn_states</a>  <a class="code" href="structconn.html#17e40cc90c3669ee5e50df2ded95c3d0">state</a>;
-<a name="l00272"></a><a class="code" href="structconn.html#b0cc8eac6501657700093908c092ed3e">00272</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">bin_substates</a> <a class="code" href="structconn.html#b0cc8eac6501657700093908c092ed3e">substate</a>;
-<a name="l00273"></a><a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">00273</a>     <span class="keyword">struct </span><a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">event</a> <a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">event</a>;
-<a name="l00274"></a><a class="code" href="structconn.html#523af570f5630fb5c1aaf51d87c96abc">00274</a>     <span class="keywordtype">short</span>  <a class="code" href="structconn.html#523af570f5630fb5c1aaf51d87c96abc">ev_flags</a>;
-<a name="l00275"></a><a class="code" href="structconn.html#d4b85274b88921db50c2a221386ca5fe">00275</a>     <span class="keywordtype">short</span>  <a class="code" href="structconn.html#d4b85274b88921db50c2a221386ca5fe">which</a>;   
-<a name="l00277"></a><a class="code" href="structconn.html#c0b276582776af667fe88bf6a73a57b1">00277</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#c0b276582776af667fe88bf6a73a57b1" title="which events were just triggered">rbuf</a>;   
-<a name="l00278"></a><a class="code" href="structconn.html#321f9c23c4a20d15d16630c5648ac41a">00278</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#321f9c23c4a20d15d16630c5648ac41a" title="buffer to read commands into">rcurr</a>;  
-<a name="l00279"></a><a class="code" href="structconn.html#fd9d7b8a1c2cdba5edd4772fae8adc23">00279</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#fd9d7b8a1c2cdba5edd4772fae8adc23" title="but if we parsed some already, this is where we stopped">rsize</a>;   
-<a name="l00280"></a><a class="code" href="structconn.html#4a7eed4d30ba338ae092ec2011e21982">00280</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4a7eed4d30ba338ae092ec2011e21982" title="total allocated size of rbuf">rbytes</a>;  
-<a name="l00282"></a><a class="code" href="structconn.html#b7bcc3e0bf2d962d2f7aad53c6b523b7">00282</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#b7bcc3e0bf2d962d2f7aad53c6b523b7" title="how much data, starting from rcur, do we have unparsed">wbuf</a>;
-<a name="l00283"></a><a class="code" href="structconn.html#d509acb6e118d4ff9991c4592ed4a544">00283</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#d509acb6e118d4ff9991c4592ed4a544">wcurr</a>;
-<a name="l00284"></a><a class="code" href="structconn.html#db55062a3fa6dcacae12144f8756eb0f">00284</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#db55062a3fa6dcacae12144f8756eb0f">wsize</a>;
-<a name="l00285"></a><a class="code" href="structconn.html#5df3a395efeb81c9ea517a81338ba1df">00285</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#5df3a395efeb81c9ea517a81338ba1df">wbytes</a>;
-<a name="l00287"></a><a class="code" href="structconn.html#3e8b2f5988a9791a105de7534aa8b29f">00287</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="NOTE: If you modify this table you _MUST_ update the function state_text.">conn_states</a>  <a class="code" href="structconn.html#3e8b2f5988a9791a105de7534aa8b29f" title="which state to go into after finishing current write">write_and_go</a>;
-<a name="l00288"></a><a class="code" href="structconn.html#6dff98252f504190f1f3412650ef5da4">00288</a>     <span class="keywordtype">void</span>   *<a class="code" href="structconn.html#6dff98252f504190f1f3412650ef5da4">write_and_free</a>; 
-<a name="l00290"></a><a class="code" href="structconn.html#28de9d8a5b9432c6f4ad521fc7875ea8">00290</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#28de9d8a5b9432c6f4ad521fc7875ea8" title="free this memory after finishing writing">ritem</a>;  
-<a name="l00291"></a><a class="code" href="structconn.html#47f8791b09c3105ecca911bea9b73406">00291</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#47f8791b09c3105ecca911bea9b73406" title="when we read in an item&amp;#39;s value, it goes here">rlbytes</a>;
-<a name="l00292"></a>00292 
-<a name="l00293"></a>00293     <span class="comment">/* data for the nread state */</span>
-<a name="l00294"></a>00294 
-<a name="l00301"></a><a class="code" href="structconn.html#7d40cb08fdb16c8cad53b9c78c542e65">00301</a>     <span class="keywordtype">void</span>   *<a class="code" href="struct__stritem.html">item</a>;     <span class="comment">/* for commands set/add/replace  */</span>
-<a name="l00302"></a>00302 
-<a name="l00303"></a>00303     <span class="comment">/* data for the swallow state */</span>
-<a name="l00304"></a><a class="code" href="structconn.html#5f95cd3a1e8b56dd5af48534162d4188">00304</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#5f95cd3a1e8b56dd5af48534162d4188">sbytes</a>;    <span class="comment">/* how many bytes to swallow */</span>
-<a name="l00305"></a>00305 
-<a name="l00306"></a>00306     <span class="comment">/* data for the mwrite state */</span>
-<a name="l00307"></a><a class="code" href="structconn.html#7fa506eb093e715dba7c51e373adf332">00307</a>     <span class="keyword">struct </span>iovec *<a class="code" href="structconn.html#7fa506eb093e715dba7c51e373adf332">iov</a>;
-<a name="l00308"></a><a class="code" href="structconn.html#a9e54ceb57a50b642bb6733f654f67ef">00308</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a9e54ceb57a50b642bb6733f654f67ef">iovsize</a>;   <span class="comment">/* number of elements allocated in iov[] */</span>
-<a name="l00309"></a><a class="code" href="structconn.html#4bfd124c25febb5c0473a64010a5e04c">00309</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4bfd124c25febb5c0473a64010a5e04c">iovused</a>;   <span class="comment">/* number of elements used in iov[] */</span>
-<a name="l00310"></a>00310 
-<a name="l00311"></a><a class="code" href="structconn.html#5ecb2828d6d2bd7d2e1bbe39d16ec5b9">00311</a>     <span class="keyword">struct </span>msghdr *<a class="code" href="structconn.html#5ecb2828d6d2bd7d2e1bbe39d16ec5b9">msglist</a>;
-<a name="l00312"></a><a class="code" href="structconn.html#4a88af6a9aa8f5723163ce46109d424e">00312</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4a88af6a9aa8f5723163ce46109d424e">msgsize</a>;   <span class="comment">/* number of elements allocated in msglist[] */</span>
-<a name="l00313"></a><a class="code" href="structconn.html#64b2e5b69fad86aa6f298c055fc96aae">00313</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#64b2e5b69fad86aa6f298c055fc96aae">msgused</a>;   <span class="comment">/* number of elements used in msglist[] */</span>
-<a name="l00314"></a><a class="code" href="structconn.html#a154e25e69a11d7837749a50523a60ea">00314</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a154e25e69a11d7837749a50523a60ea">msgcurr</a>;   <span class="comment">/* element in msglist[] being transmitted now */</span>
-<a name="l00315"></a><a class="code" href="structconn.html#dccea2771b5da3455ec501d046bbfbb2">00315</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#dccea2771b5da3455ec501d046bbfbb2">msgbytes</a>;  <span class="comment">/* number of bytes in current msg */</span>
-<a name="l00316"></a>00316 
-<a name="l00317"></a><a class="code" href="structconn.html#3f8edd0d1efc80f5d9e1f519581d459e">00317</a>     <a class="code" href="struct__stritem.html">item</a>   **<a class="code" href="structconn.html#3f8edd0d1efc80f5d9e1f519581d459e">ilist</a>;   <span class="comment">/* list of items to write out */</span>
-<a name="l00318"></a><a class="code" href="structconn.html#864209402985a2c5fa5a5215f1dfe8dc">00318</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#864209402985a2c5fa5a5215f1dfe8dc">isize</a>;
-<a name="l00319"></a><a class="code" href="structconn.html#496919c8fa5cdbfba62d8d8beb7bddae">00319</a>     <a class="code" href="struct__stritem.html">item</a>   **<a class="code" href="structconn.html#496919c8fa5cdbfba62d8d8beb7bddae">icurr</a>;
-<a name="l00320"></a><a class="code" href="structconn.html#ecd54059ef51d05fcb5cfdb9c7317903">00320</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#ecd54059ef51d05fcb5cfdb9c7317903">ileft</a>;
-<a name="l00321"></a>00321 
-<a name="l00322"></a><a class="code" href="structconn.html#75d646e58527bdaa2416942097938c93">00322</a>     <span class="keywordtype">char</span>   **<a class="code" href="structconn.html#75d646e58527bdaa2416942097938c93">suffixlist</a>;
-<a name="l00323"></a><a class="code" href="structconn.html#aea0ce1e0d7986281960a6a7a063e701">00323</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#aea0ce1e0d7986281960a6a7a063e701">suffixsize</a>;
-<a name="l00324"></a><a class="code" href="structconn.html#24bdb9aaa257aeacfa8703c6f0a808da">00324</a>     <span class="keywordtype">char</span>   **<a class="code" href="structconn.html#24bdb9aaa257aeacfa8703c6f0a808da">suffixcurr</a>;
-<a name="l00325"></a><a class="code" href="structconn.html#7b1984060d5b4b2aea26905718cb42c8">00325</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#7b1984060d5b4b2aea26905718cb42c8">suffixleft</a>;
+<a name="l00058"></a>00058 <span class="comment">/* unistd.h is here */</span>
+<a name="l00059"></a>00059 <span class="preprocessor">#if HAVE_UNISTD_H</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span><span class="preprocessor"># include &lt;unistd.h&gt;</span>
+<a name="l00061"></a>00061 <span class="preprocessor">#endif</span>
+<a name="l00062"></a>00062 <span class="preprocessor"></span>
+<a name="l00063"></a>00063 <span class="comment">/* Slab sizing definitions. */</span>
+<a name="l00064"></a><a class="code" href="memcached_8h.html#3be25b5d15a433c400ec50d2c9d858b9">00064</a> <span class="preprocessor">#define POWER_SMALLEST 1</span>
+<a name="l00065"></a><a class="code" href="memcached_8h.html#0f6e848eba50c148da7a61eb94061c3c">00065</a> <span class="preprocessor"></span><span class="preprocessor">#define POWER_LARGEST  200</span>
+<a name="l00066"></a><a class="code" href="memcached_8h.html#1000923632a496e81e50102c2694db41">00066</a> <span class="preprocessor"></span><span class="preprocessor">#define POWER_BLOCK 1048576</span>
+<a name="l00067"></a><a class="code" href="memcached_8h.html#8cd56df53d2341debe15fafe411515a6">00067</a> <span class="preprocessor"></span><span class="preprocessor">#define CHUNK_ALIGN_BYTES 8</span>
+<a name="l00068"></a><a class="code" href="memcached_8h.html#d6e30718df50c9991afd87dc619c851f">00068</a> <span class="preprocessor"></span><span class="preprocessor">#define DONT_PREALLOC_SLABS</span>
+<a name="l00069"></a><a class="code" href="memcached_8h.html#e8e332c92e566cf3b38a8a7e3d08eafe">00069</a> <span class="preprocessor"></span><span class="preprocessor">#define MAX_NUMBER_OF_SLAB_CLASSES (POWER_LARGEST + 1)</span>
+<a name="l00070"></a>00070 <span class="preprocessor"></span>
+<a name="l00073"></a><a class="code" href="memcached_8h.html#421b08fd9fc3d24db6d39014c02f66bb">00073</a> <span class="preprocessor">#define TAIL_REPAIR_TIME (3 * 3600)</span>
+<a name="l00074"></a>00074 <span class="preprocessor"></span>
+<a name="l00076"></a><a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4">00076</a> <span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>;
+<a name="l00077"></a>00077 
+<a name="l00079"></a><a class="code" href="structslab__stats.html">00079</a> <span class="keyword">struct </span><a class="code" href="structslab__stats.html" title="Stats stored per slab (and per thread).">slab_stats</a> {
+<a name="l00080"></a><a class="code" href="structslab__stats.html#4da67cc4f2297d79e69e3805f42c90b7">00080</a>     uint64_t  <a class="code" href="structslab__stats.html#4da67cc4f2297d79e69e3805f42c90b7">set_cmds</a>;
+<a name="l00081"></a><a class="code" href="structslab__stats.html#7bc073fa35375d23129eab883ff2b633">00081</a>     uint64_t  <a class="code" href="structslab__stats.html#7bc073fa35375d23129eab883ff2b633">get_hits</a>;
+<a name="l00082"></a><a class="code" href="structslab__stats.html#269423b43063e97b7ecdd16347f38cb4">00082</a>     uint64_t  <a class="code" href="structslab__stats.html#269423b43063e97b7ecdd16347f38cb4">delete_hits</a>;
+<a name="l00083"></a><a class="code" href="structslab__stats.html#391924745fcae79874c492f9db29f6e5">00083</a>     uint64_t  <a class="code" href="structslab__stats.html#391924745fcae79874c492f9db29f6e5">cas_hits</a>;
+<a name="l00084"></a><a class="code" href="structslab__stats.html#f7dc635cd3086d46d93cfd44e3a6c3e7">00084</a>     uint64_t  <a class="code" href="structslab__stats.html#f7dc635cd3086d46d93cfd44e3a6c3e7">cas_badval</a>;
+<a name="l00085"></a><a class="code" href="structslab__stats.html#a184357792689748e228095f17f9e83c">00085</a>     uint64_t  <a class="code" href="structslab__stats.html#a184357792689748e228095f17f9e83c">incr_hits</a>;
+<a name="l00086"></a><a class="code" href="structslab__stats.html#08355226ee7038716958682338fdbdda">00086</a>     uint64_t  <a class="code" href="structslab__stats.html#08355226ee7038716958682338fdbdda">decr_hits</a>;
+<a name="l00087"></a>00087 };
+<a name="l00088"></a>00088 
+<a name="l00092"></a><a class="code" href="structthread__stats.html">00092</a> <span class="keyword">struct </span><a class="code" href="structthread__stats.html" title="Stats stored per-thread.">thread_stats</a> {
+<a name="l00093"></a><a class="code" href="structthread__stats.html#656e2f3c52c764e6bbba2c8de29ae812">00093</a>     pthread_mutex_t   <a class="code" href="structthread__stats.html#656e2f3c52c764e6bbba2c8de29ae812">mutex</a>;
+<a name="l00094"></a><a class="code" href="structthread__stats.html#ffa01fa8b4974f4839122424c1bb2fc3">00094</a>     uint64_t          <a class="code" href="structthread__stats.html#ffa01fa8b4974f4839122424c1bb2fc3">get_cmds</a>;
+<a name="l00095"></a><a class="code" href="structthread__stats.html#cc592fd8da9cdd9a227c59f8ba346fb5">00095</a>     uint64_t          <a class="code" href="structthread__stats.html#cc592fd8da9cdd9a227c59f8ba346fb5">get_misses</a>;
+<a name="l00096"></a><a class="code" href="structthread__stats.html#eb08e5cab194e1337007464c42fbbbdf">00096</a>     uint64_t          <a class="code" href="structthread__stats.html#eb08e5cab194e1337007464c42fbbbdf">delete_misses</a>;
+<a name="l00097"></a><a class="code" href="structthread__stats.html#9d783773df9a1163f1475fe10e4d2838">00097</a>     uint64_t          <a class="code" href="structthread__stats.html#9d783773df9a1163f1475fe10e4d2838">incr_misses</a>;
+<a name="l00098"></a><a class="code" href="structthread__stats.html#f5376d1206b9e71cbff2dab81e930d28">00098</a>     uint64_t          <a class="code" href="structthread__stats.html#f5376d1206b9e71cbff2dab81e930d28">decr_misses</a>;
+<a name="l00099"></a><a class="code" href="structthread__stats.html#daaed26081651c8236b1cc5b4f4748ec">00099</a>     uint64_t          <a class="code" href="structthread__stats.html#daaed26081651c8236b1cc5b4f4748ec">cas_misses</a>;
+<a name="l00100"></a><a class="code" href="structthread__stats.html#78b389a507be8c78d2757b79c6b2069d">00100</a>     uint64_t          <a class="code" href="structthread__stats.html#78b389a507be8c78d2757b79c6b2069d">bytes_read</a>;
+<a name="l00101"></a><a class="code" href="structthread__stats.html#fff437fd1fcac940ffd2fa44d3182838">00101</a>     uint64_t          <a class="code" href="structthread__stats.html#fff437fd1fcac940ffd2fa44d3182838">bytes_written</a>;
+<a name="l00102"></a><a class="code" href="structthread__stats.html#8f4915ca2892f21641a126951660b625">00102</a>     uint64_t          <a class="code" href="structthread__stats.html#8f4915ca2892f21641a126951660b625">flush_cmds</a>;
+<a name="l00103"></a><a class="code" href="structthread__stats.html#efc242998efe6318a32510565acbcb01">00103</a>     <span class="keyword">struct </span><a class="code" href="structslab__stats.html" title="Stats stored per slab (and per thread).">slab_stats</a> <a class="code" href="structslab__stats.html" title="Stats stored per slab (and per thread).">slab_stats</a>[<a class="code" href="memcached_8h.html#e8e332c92e566cf3b38a8a7e3d08eafe">MAX_NUMBER_OF_SLAB_CLASSES</a>];
+<a name="l00104"></a>00104 };
+<a name="l00105"></a>00105 
+<a name="l00109"></a><a class="code" href="structstats.html">00109</a> <span class="keyword">struct </span><a class="code" href="structstats.html" title="Global stats.">stats</a> {
+<a name="l00110"></a><a class="code" href="structstats.html#a1da24a4ab04ced93a99433d2914ed96">00110</a>     pthread_mutex_t <a class="code" href="structstats.html#a1da24a4ab04ced93a99433d2914ed96">mutex</a>;
+<a name="l00111"></a><a class="code" href="structstats.html#7e27973d723b2bb83265f1324b6265d5">00111</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#7e27973d723b2bb83265f1324b6265d5">curr_items</a>;
+<a name="l00112"></a><a class="code" href="structstats.html#f4feaf763564d06ef80569941f31b641">00112</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#f4feaf763564d06ef80569941f31b641">total_items</a>;
+<a name="l00113"></a><a class="code" href="structstats.html#16d174f23f4b8e48c3dc2557f2db7750">00113</a>     uint64_t      <a class="code" href="structstats.html#16d174f23f4b8e48c3dc2557f2db7750">curr_bytes</a>;
+<a name="l00114"></a><a class="code" href="structstats.html#1c0edacbfc2610977c9d1c6a675be6bb">00114</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#1c0edacbfc2610977c9d1c6a675be6bb">curr_conns</a>;
+<a name="l00115"></a><a class="code" href="structstats.html#4b4ee0d2ac0f6c34246f459cb9af20cd">00115</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#4b4ee0d2ac0f6c34246f459cb9af20cd">total_conns</a>;
+<a name="l00116"></a><a class="code" href="structstats.html#444566021e240f7552b946e7516d6ebe">00116</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>  <a class="code" href="structstats.html#444566021e240f7552b946e7516d6ebe">conn_structs</a>;
+<a name="l00117"></a><a class="code" href="structstats.html#990bacf5404f31f17a6dafc465a2b775">00117</a>     uint64_t      <a class="code" href="structstats.html#990bacf5404f31f17a6dafc465a2b775">get_cmds</a>;
+<a name="l00118"></a><a class="code" href="structstats.html#53ccb9f0a724b936ad00f9af020dd6a0">00118</a>     uint64_t      <a class="code" href="structstats.html#53ccb9f0a724b936ad00f9af020dd6a0">set_cmds</a>;
+<a name="l00119"></a><a class="code" href="structstats.html#12c881743d5b3afd0a4ab18b29a413c9">00119</a>     uint64_t      <a class="code" href="structstats.html#12c881743d5b3afd0a4ab18b29a413c9">get_hits</a>;
+<a name="l00120"></a><a class="code" href="structstats.html#1802ea50eb0aab84ab3e923dd53d294e">00120</a>     uint64_t      <a class="code" href="structstats.html#1802ea50eb0aab84ab3e923dd53d294e">get_misses</a>;
+<a name="l00121"></a><a class="code" href="structstats.html#cecd3ccfa807a4fb7deb5be5e174a6fc">00121</a>     uint64_t      <a class="code" href="structstats.html#cecd3ccfa807a4fb7deb5be5e174a6fc">evictions</a>;
+<a name="l00122"></a><a class="code" href="structstats.html#baf2f10d93dcc5aef7c8ca46c3c52e0b">00122</a>     time_t        <a class="code" href="structstats.html#baf2f10d93dcc5aef7c8ca46c3c52e0b">started</a>;          <span class="comment">/* when the process was started */</span>
+<a name="l00123"></a><a class="code" href="structstats.html#ed0a44d59a6fc1d01dca4639414905a0">00123</a>     <span class="keywordtype">bool</span>          <a class="code" href="structstats.html#ed0a44d59a6fc1d01dca4639414905a0">accepting_conns</a>;  <span class="comment">/* whether we are currently accepting */</span>
+<a name="l00124"></a><a class="code" href="structstats.html#7cce50f30bfeebca79e4fb3c36def765">00124</a>     uint64_t      <a class="code" href="structstats.html#7cce50f30bfeebca79e4fb3c36def765">listen_disabled_num</a>;
+<a name="l00125"></a>00125 };
+<a name="l00126"></a>00126 
+<a name="l00127"></a><a class="code" href="memcached_8h.html#6d56e2cd35fd2a8391a19abba528f353">00127</a> <span class="preprocessor">#define MAX_VERBOSITY_LEVEL 2</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span>
+<a name="l00129"></a>00129 <span class="comment">/* When adding a setting, be sure to update process_stat_settings */</span>
+<a name="l00133"></a><a class="code" href="structsettings.html">00133</a> <span class="keyword">struct </span><a class="code" href="structsettings.html" title="Globally accessible settings as derived from the commandline.">settings</a> {
+<a name="l00134"></a><a class="code" href="structsettings.html#9e462ca2f9a0531d782cd24f2e51354f">00134</a>     <span class="keywordtype">size_t</span> <a class="code" href="structsettings.html#9e462ca2f9a0531d782cd24f2e51354f">maxbytes</a>;
+<a name="l00135"></a><a class="code" href="structsettings.html#661321f255edb678a4b8a52e909b4acf">00135</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#661321f255edb678a4b8a52e909b4acf">maxconns</a>;
+<a name="l00136"></a><a class="code" href="structsettings.html#20fa1e33e54d255f4f5e3df2da3e64ef">00136</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#20fa1e33e54d255f4f5e3df2da3e64ef">port</a>;
+<a name="l00137"></a><a class="code" href="structsettings.html#1a574901d729a109bd3156885c96e37e">00137</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#1a574901d729a109bd3156885c96e37e">udpport</a>;
+<a name="l00138"></a><a class="code" href="structsettings.html#3077457f2ff945dbc779ec42c44dfb08">00138</a>     <span class="keywordtype">char</span> *<a class="code" href="structsettings.html#3077457f2ff945dbc779ec42c44dfb08">inter</a>;
+<a name="l00139"></a><a class="code" href="structsettings.html#8cfab16abb0cfc28ce1244c48bacdb6e">00139</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#8cfab16abb0cfc28ce1244c48bacdb6e">verbose</a>;
+<a name="l00140"></a><a class="code" href="structsettings.html#df482d13739658b54ac96c6eadba8bc6">00140</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> <a class="code" href="structsettings.html#df482d13739658b54ac96c6eadba8bc6">oldest_live</a>; <span class="comment">/* ignore existing items older than this */</span>
+<a name="l00141"></a><a class="code" href="structsettings.html#d168c4ce8bca42ce8f7b0ba8b66fba1a">00141</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#d168c4ce8bca42ce8f7b0ba8b66fba1a">evict_to_free</a>;
+<a name="l00142"></a><a class="code" href="structsettings.html#4c283e7be93d2eb0e7af366abc360ba7">00142</a>     <span class="keywordtype">char</span> *<a class="code" href="structsettings.html#4c283e7be93d2eb0e7af366abc360ba7">socketpath</a>;   <span class="comment">/* path to unix socket if using local socket */</span>
+<a name="l00143"></a><a class="code" href="structsettings.html#f277fc65f2ad1e28b75305e1b4366b8a">00143</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#f277fc65f2ad1e28b75305e1b4366b8a">access</a>;  <span class="comment">/* access mask (a la chmod) for unix domain socket */</span>
+<a name="l00144"></a><a class="code" href="structsettings.html#a0c4be9f40fe18de45a3ee9bb9fda8a6">00144</a>     <span class="keywordtype">double</span> <a class="code" href="structsettings.html#a0c4be9f40fe18de45a3ee9bb9fda8a6">factor</a>;          <span class="comment">/* chunk size growth factor */</span>
+<a name="l00145"></a><a class="code" href="structsettings.html#59bb385a05df23defc39f23a4b95b2be">00145</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#59bb385a05df23defc39f23a4b95b2be">chunk_size</a>;
+<a name="l00146"></a><a class="code" href="structsettings.html#b7886bf6034656be4f274719e2f6c4a1">00146</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#b7886bf6034656be4f274719e2f6c4a1">num_threads</a>;        <span class="comment">/* number of libevent threads to run */</span>
+<a name="l00147"></a><a class="code" href="structsettings.html#3f7e4aa1d7561b994111a9e47f82f1bb">00147</a>     <span class="keywordtype">char</span> <a class="code" href="structsettings.html#3f7e4aa1d7561b994111a9e47f82f1bb">prefix_delimiter</a>;  <span class="comment">/* character that marks a key prefix (for stats) */</span>
+<a name="l00148"></a><a class="code" href="structsettings.html#b49cd2e86b9b26f407fe76569560a9df">00148</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#b49cd2e86b9b26f407fe76569560a9df">detail_enabled</a>;     <span class="comment">/* nonzero if we're collecting detailed stats */</span>
+<a name="l00149"></a><a class="code" href="structsettings.html#85ffd37171524861e0e384bb5c607e17">00149</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#85ffd37171524861e0e384bb5c607e17">reqs_per_event</a>;     <span class="comment">/* Maximum number of io to process on each</span>
+<a name="l00150"></a>00150 <span class="comment">                               io-event. */</span>
+<a name="l00151"></a><a class="code" href="structsettings.html#df2782217e9e89322915fb32fee95880">00151</a>     <span class="keywordtype">bool</span> <a class="code" href="structsettings.html#df2782217e9e89322915fb32fee95880">use_cas</a>;
+<a name="l00152"></a><a class="code" href="structsettings.html#f38c63a2526c784f539575bf15525ca2">00152</a>     <span class="keywordtype">int</span> <a class="code" href="structsettings.html#f38c63a2526c784f539575bf15525ca2">backlog</a>;
+<a name="l00153"></a>00153 };
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155 <span class="keyword">extern</span> <span class="keyword">struct </span><a class="code" href="structstats.html" title="Global stats.">stats</a> <a class="code" href="structstats.html" title="Global stats.">stats</a>;
+<a name="l00156"></a>00156 <span class="keyword">extern</span> time_t <a class="code" href="memcached_8c.html#584cbee39bbab65f2c8d87932cf92140">process_started</a>;
+<a name="l00157"></a>00157 <span class="keyword">extern</span> <span class="keyword">struct </span><a class="code" href="structsettings.html" title="Globally accessible settings as derived from the commandline.">settings</a> <a class="code" href="structsettings.html" title="Globally accessible settings as derived from the commandline.">settings</a>;
+<a name="l00158"></a>00158 
+<a name="l00159"></a><a class="code" href="memcached_8h.html#0fdfa9fdfdd2d9cd25d7bd7ad6033e03">00159</a> <span class="preprocessor">#define ITEM_LINKED 1</span>
+<a name="l00160"></a><a class="code" href="memcached_8h.html#92c9e4680eee65905b0518321805430f">00160</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_CAS 2</span>
+<a name="l00161"></a>00161 <span class="preprocessor"></span>
+<a name="l00162"></a>00162 <span class="comment">/* temp */</span>
+<a name="l00163"></a><a class="code" href="memcached_8h.html#0eac12291582819219bf0f6ce9124364">00163</a> <span class="preprocessor">#define ITEM_SLABBED 4</span>
+<a name="l00164"></a>00164 <span class="preprocessor"></span>
+<a name="l00168"></a><a class="code" href="struct__stritem.html">00168</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">_stritem</a> {
+<a name="l00169"></a><a class="code" href="struct__stritem.html#d7f5d4ca7eae6391b02a8e0d95c99b87">00169</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">_stritem</a> *<a class="code" href="struct__stritem.html#d7f5d4ca7eae6391b02a8e0d95c99b87">next</a>;
+<a name="l00170"></a><a class="code" href="struct__stritem.html#fcc1decef9e8c41fb64f4995462a08fa">00170</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">_stritem</a> *<a class="code" href="struct__stritem.html#fcc1decef9e8c41fb64f4995462a08fa">prev</a>;
+<a name="l00171"></a><a class="code" href="struct__stritem.html#cc3bc0ca62146131ad8ae8518545e11b">00171</a>     <span class="keyword">struct </span><a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">_stritem</a> *<a class="code" href="struct__stritem.html#cc3bc0ca62146131ad8ae8518545e11b">h_next</a>;    <span class="comment">/* hash chain next */</span>
+<a name="l00172"></a><a class="code" href="struct__stritem.html#7953b640eea943ce42644c00136cd462">00172</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>      <a class="code" href="struct__stritem.html#7953b640eea943ce42644c00136cd462">time</a>;       <span class="comment">/* least recent access */</span>
+<a name="l00173"></a><a class="code" href="struct__stritem.html#fd87174e4e2f16bf48a950ff28ba65d4">00173</a>     <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a>      <a class="code" href="struct__stritem.html#fd87174e4e2f16bf48a950ff28ba65d4">exptime</a>;    <span class="comment">/* expire time */</span>
+<a name="l00174"></a><a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">00174</a>     <span class="keywordtype">int</span>             <a class="code" href="struct__stritem.html#e718d73982b5d22c28887575e9e4dcd4">nbytes</a>;     <span class="comment">/* size of data */</span>
+<a name="l00175"></a><a class="code" href="struct__stritem.html#f4b10743e972c424f170f3bbc277ded5">00175</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>  <a class="code" href="struct__stritem.html#f4b10743e972c424f170f3bbc277ded5">refcount</a>;
+<a name="l00176"></a><a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">00176</a>     uint8_t         <a class="code" href="struct__stritem.html#d104597f204745473144018ef15c1459">nsuffix</a>;    <span class="comment">/* length of flags-and-length string */</span>
+<a name="l00177"></a><a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">00177</a>     uint8_t         <a class="code" href="struct__stritem.html#35e3398ad4aaed940e920c99157eca10">it_flags</a>;   <span class="comment">/* ITEM_* above */</span>
+<a name="l00178"></a><a class="code" href="struct__stritem.html#2b9111cab21baa2ee90bd8866e7be988">00178</a>     uint8_t         <a class="code" href="struct__stritem.html#2b9111cab21baa2ee90bd8866e7be988">slabs_clsid</a>;<span class="comment">/* which slab class we're in */</span>
+<a name="l00179"></a><a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">00179</a>     uint8_t         <a class="code" href="struct__stritem.html#5e19a37b7235464196b4155a46758ff4">nkey</a>;       <span class="comment">/* key length, w/terminating null and padding */</span>
+<a name="l00180"></a><a class="code" href="struct__stritem.html#c6f2eb9984981d107d1e339cad333f50">00180</a>     <span class="keywordtype">void</span> * <a class="code" href="struct__stritem.html#c6f2eb9984981d107d1e339cad333f50">end</a>[];
+<a name="l00181"></a>00181     <span class="comment">/* if it_flags &amp; ITEM_CAS we have 8 bytes CAS */</span>
+<a name="l00182"></a>00182     <span class="comment">/* then null-terminated key */</span>
+<a name="l00183"></a>00183     <span class="comment">/* then " flags length\r\n" (no terminating null) */</span>
+<a name="l00184"></a>00184     <span class="comment">/* then data with terminating \r\n (no terminating null; it's binary!) */</span>
+<a name="l00185"></a>00185 } <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>;
+<a name="l00186"></a>00186 
+<a name="l00187"></a>00187 <span class="comment">/* warning: don't use these macros with a function, as it evals its arg twice */</span>
+<a name="l00188"></a><a class="code" href="memcached_8h.html#b8e3564ae343cbe6a61e7d277fe0d849">00188</a> <span class="preprocessor">#define ITEM_get_cas(i) ((uint64_t)(((i)-&gt;it_flags &amp; ITEM_CAS) ? \</span>
+<a name="l00189"></a>00189 <span class="preprocessor">                                    *(uint64_t*)&amp;((i)-&gt;end[0]) : 0x0))</span>
+<a name="l00190"></a><a class="code" href="memcached_8h.html#906a01f2020378ebc543f3fac3a8de5c">00190</a> <span class="preprocessor"></span><span class="preprocessor">#define ITEM_set_cas(i,v) { if ((i)-&gt;it_flags &amp; ITEM_CAS) { \</span>
+<a name="l00191"></a>00191 <span class="preprocessor">                          *(uint64_t*)&amp;((i)-&gt;end[0]) = v; } }</span>
+<a name="l00192"></a>00192 <span class="preprocessor"></span>
+<a name="l00193"></a><a class="code" href="memcached_8h.html#6f0bbc1b60dc6d44e4f33b7072c5c556">00193</a> <span class="preprocessor">#define ITEM_key(item) (((char*)&amp;((item)-&gt;end[0])) \</span>
+<a name="l00194"></a>00194 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
+<a name="l00195"></a>00195 <span class="preprocessor"></span>
+<a name="l00196"></a><a class="code" href="memcached_8h.html#cc9266e9b04daa12e359eb6d6f052fc3">00196</a> <span class="preprocessor">#define ITEM_suffix(item) ((char*) &amp;((item)-&gt;end[0]) + (item)-&gt;nkey + 1 \</span>
+<a name="l00197"></a>00197 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
+<a name="l00198"></a>00198 <span class="preprocessor"></span>
+<a name="l00199"></a><a class="code" href="memcached_8h.html#442889c7cb5c1ec39981f299331b4b29">00199</a> <span class="preprocessor">#define ITEM_data(item) ((char*) &amp;((item)-&gt;end[0]) + (item)-&gt;nkey + 1 \</span>
+<a name="l00200"></a>00200 <span class="preprocessor">         + (item)-&gt;nsuffix \</span>
+<a name="l00201"></a>00201 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
+<a name="l00202"></a>00202 <span class="preprocessor"></span>
+<a name="l00203"></a><a class="code" href="memcached_8h.html#5c9d5467cfb934e32d0794afc596fded">00203</a> <span class="preprocessor">#define ITEM_ntotal(item) (sizeof(struct _stritem) + (item)-&gt;nkey + 1 \</span>
+<a name="l00204"></a>00204 <span class="preprocessor">         + (item)-&gt;nsuffix + (item)-&gt;nbytes \</span>
+<a name="l00205"></a>00205 <span class="preprocessor">         + (((item)-&gt;it_flags &amp; ITEM_CAS) ? sizeof(uint64_t) : 0))</span>
+<a name="l00206"></a>00206 <span class="preprocessor"></span>
+<a name="l00208"></a><a class="code" href="memcached_8h.html#76c2c7de1009374de65513d72f6e3e56">00208</a> <span class="preprocessor">#define APPEND_STAT(name, fmt, val) \</span>
+<a name="l00209"></a>00209 <span class="preprocessor">    append_stat(name, add_stats, c, fmt, val);</span>
+<a name="l00210"></a>00210 <span class="preprocessor"></span>
+<a name="l00213"></a><a class="code" href="memcached_8h.html#30ab71365faf0a05119b4705e26d81a8">00213</a> <span class="preprocessor">#define APPEND_NUM_FMT_STAT(name_fmt, num, name, fmt, val)   \</span>
+<a name="l00214"></a>00214 <span class="preprocessor">    klen = sprintf(key_str, name_fmt, num, name);            \</span>
+<a name="l00215"></a>00215 <span class="preprocessor">    vlen = sprintf(val_str, fmt, val);                       \</span>
+<a name="l00216"></a>00216 <span class="preprocessor">    add_stats(key_str, klen, val_str, vlen, c);</span>
+<a name="l00217"></a>00217 <span class="preprocessor"></span>
+<a name="l00219"></a><a class="code" href="memcached_8h.html#be2689982c5b4d28c7eb6151710f404d">00219</a> <span class="preprocessor">#define APPEND_NUM_STAT(num, name, fmt, val) \</span>
+<a name="l00220"></a>00220 <span class="preprocessor">    APPEND_NUM_FMT_STAT("%d:%s", num, name, fmt, val)</span>
+<a name="l00221"></a>00221 <span class="preprocessor"></span>
+<a name="l00231"></a><a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">00231</a> <span class="keyword">typedef</span> void (*<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a>)(<span class="keyword">const</span> <span class="keywordtype">char</span> *key, <span class="keyword">const</span> uint16_t klen,
+<a name="l00232"></a>00232                          <span class="keyword">const</span> <span class="keywordtype">char</span> *val, <span class="keyword">const</span> uint32_t vlen,
+<a name="l00233"></a>00233                          <span class="keyword">const</span> <span class="keywordtype">void</span> *cookie);
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 <span class="comment">/*</span>
+<a name="l00236"></a>00236 <span class="comment"> * NOTE: If you modify this table you _MUST_ update the function state_text</span>
+<a name="l00237"></a>00237 <span class="comment"> */</span>
+<a name="l00241"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7">00241</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="Possible states of a connection.">conn_states</a> {
+<a name="l00242"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa">00242</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7b8f6ee6d7c37cbcd7062290e7f737dfa" title="the socket which listens for connections">conn_listening</a>,  
+<a name="l00243"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef">00243</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7471b58ebc7dca71b12cff6fc620d70ef" title="Prepare connection for next command.">conn_new_cmd</a>,    
+<a name="l00244"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6">00244</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a745b0d57ee61815e8785958115727bcd6" title="waiting for a readable socket">conn_waiting</a>,    
+<a name="l00245"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39">00245</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a70fba4717ce3bd2ef568d54994adf8d39" title="reading in a command line">conn_read</a>,       
+<a name="l00246"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4">00246</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7d1037eff7d3fdbb41b18a4f2318c04e4" title="try to parse a command from the input buffer">conn_parse_cmd</a>,  
+<a name="l00247"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594">00247</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7cbae1e2e254af99276db29687b1c1594" title="writing out a simple response">conn_write</a>,      
+<a name="l00248"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9">00248</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77bd90fbd58a0d585b4dbb133df716ba9" title="reading in a fixed number of bytes">conn_nread</a>,      
+<a name="l00249"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990">00249</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a77f3423d135032e6efd97a54256e0d990" title="swallowing unnecessary bytes w/o storing">conn_swallow</a>,    
+<a name="l00250"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13">00250</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7baf6f3e6a12460ae0b11c5dc984def13" title="closing this connection">conn_closing</a>,    
+<a name="l00251"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca">00251</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a74cc089a47b08dead789981192fb85bca" title="writing out many items sequentially">conn_mwrite</a>,     
+<a name="l00252"></a><a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d">00252</a>     <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7ca81038536eb0d4020afb6ef63c1d21d" title="Max state value (used for assertion).">conn_max_state</a>   
+<a name="l00253"></a>00253 };
+<a name="l00254"></a>00254 
+<a name="l00255"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">00255</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">bin_substates</a> {
+<a name="l00256"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7cef6c433a3f788f6496712ff3863ed81">00256</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7cef6c433a3f788f6496712ff3863ed81">bin_no_state</a>,
+<a name="l00257"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c79ab816e3175ec539a708893697ccb9d8">00257</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c79ab816e3175ec539a708893697ccb9d8">bin_reading_set_header</a>,
+<a name="l00258"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c73e3d8313972488ac21259efabdc55e6b">00258</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c73e3d8313972488ac21259efabdc55e6b">bin_reading_cas_header</a>,
+<a name="l00259"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7d06ff8b91c2992cc00a729781a27a60b">00259</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7d06ff8b91c2992cc00a729781a27a60b">bin_read_set_value</a>,
+<a name="l00260"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c71475f54a5df58e452a485e0fdece93dc">00260</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c71475f54a5df58e452a485e0fdece93dc">bin_reading_get_key</a>,
+<a name="l00261"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7e16889ae613bfb54c7b620a8ffc4155b">00261</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7e16889ae613bfb54c7b620a8ffc4155b">bin_reading_stat</a>,
+<a name="l00262"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7ed8eb46134a61812268a752a532686d7">00262</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7ed8eb46134a61812268a752a532686d7">bin_reading_del_header</a>,
+<a name="l00263"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c711010d81960b20927d416a9ff93400d2">00263</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c711010d81960b20927d416a9ff93400d2">bin_reading_incr_header</a>,
+<a name="l00264"></a><a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7a4f0970d48aa5e8389a987a590f51fd1">00264</a>     <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7a4f0970d48aa5e8389a987a590f51fd1">bin_read_flush_exptime</a>
+<a name="l00265"></a>00265 };
+<a name="l00266"></a>00266 
+<a name="l00267"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">00267</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> {
+<a name="l00268"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd4ea4e26ca73d727186948986255b7ee1">00268</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd4ea4e26ca73d727186948986255b7ee1">ascii_prot</a> = 3, <span class="comment">/* arbitrary value. */</span>
+<a name="l00269"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd013efd3024d75e93d9fbd7109e387ac5">00269</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd013efd3024d75e93d9fbd7109e387ac5">ascii_udp_prot</a>,
+<a name="l00270"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cda690b1bac2d1cb639ad1cae78b34e00a">00270</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cda690b1bac2d1cb639ad1cae78b34e00a">binary_prot</a>,
+<a name="l00271"></a><a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cdf80e49eae5478cb0ec774eb4c6f691e5">00271</a>     <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cdf80e49eae5478cb0ec774eb4c6f691e5">negotiating_prot</a> <span class="comment">/* Discovering the protocol */</span>
+<a name="l00272"></a>00272 };
+<a name="l00273"></a>00273 
+<a name="l00274"></a><a class="code" href="memcached_8h.html#e7d628501377024bde05056f4af112bb">00274</a> <span class="preprocessor">#define IS_UDP(x) (x == ascii_udp_prot)</span>
+<a name="l00275"></a>00275 <span class="preprocessor"></span>
+<a name="l00276"></a><a class="code" href="memcached_8h.html#2beaf4cbf661902595987c951dca81b5">00276</a> <span class="preprocessor">#define NREAD_ADD 1</span>
+<a name="l00277"></a><a class="code" href="memcached_8h.html#fbe0384d1c4c682750a250c53a4360b6">00277</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_SET 2</span>
+<a name="l00278"></a><a class="code" href="memcached_8h.html#cf25e0ecbffb495dfedf760dde07d729">00278</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_REPLACE 3</span>
+<a name="l00279"></a><a class="code" href="memcached_8h.html#ceae72061dd3619d8fb95e33bae0b8e8">00279</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_APPEND 4</span>
+<a name="l00280"></a><a class="code" href="memcached_8h.html#fbaf99dc7e4b0e86f91e8e44da33a5c1">00280</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_PREPEND 5</span>
+<a name="l00281"></a><a class="code" href="memcached_8h.html#efa2deecfd52be7f36ed92e857a5a134">00281</a> <span class="preprocessor"></span><span class="preprocessor">#define NREAD_CAS 6</span>
+<a name="l00282"></a>00282 <span class="preprocessor"></span>
+<a name="l00283"></a><a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">00283</a> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> {
+<a name="l00284"></a><a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e77647f28a49007bb2c1f10fa36f33b55">00284</a>     <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18ef7ef7e30a1b86cc3ffae6fa876110d66">NOT_STORED</a>=0, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e77647f28a49007bb2c1f10fa36f33b55">STORED</a>, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e3197625a1bb2264943f5a95f236d9973">EXISTS</a>, <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18ecdaa2919bac56fe1090eb3dbb9526472">NOT_FOUND</a>
+<a name="l00285"></a>00285 };
+<a name="l00286"></a>00286 
+<a name="l00287"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">00287</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
+<a name="l00288"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#b491d0e009031a4266f9f81e96129309">00288</a>     pthread_t thread_id;        <span class="comment">/* unique ID of this thread */</span>
+<a name="l00289"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#edc60f547936f4659d10c690f5eeeada">00289</a>     <span class="keyword">struct </span>event_base *base;    <span class="comment">/* libevent handle this thread uses */</span>
+<a name="l00290"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#a291c9fc61c0ae2e403aa8feeaa59094">00290</a>     <span class="keyword">struct </span>event notify_event;  <span class="comment">/* listen event for notify pipe */</span>
+<a name="l00291"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#01d0d9093c0f04bda0656d0aa6f170e9">00291</a>     <span class="keywordtype">int</span> notify_receive_fd;      <span class="comment">/* receiving end of notify pipe */</span>
+<a name="l00292"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#d53e4c5a53ae00ed1f08d8476981c36b">00292</a>     <span class="keywordtype">int</span> notify_send_fd;         <span class="comment">/* sending end of notify pipe */</span>
+<a name="l00293"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#b81f0ce2ef093d3d50c78d51ab5d4c8c">00293</a>     <span class="keyword">struct </span><a class="code" href="structthread__stats.html" title="Stats stored per-thread.">thread_stats</a> <a class="code" href="structstats.html" title="Global stats.">stats</a>;  <span class="comment">/* Stats generated by this thread */</span>
+<a name="l00294"></a><a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html#79dc836742346c8db838951b2d6f46c5">00294</a>     <span class="keyword">struct </span><a class="code" href="structconn__queue.html">conn_queue</a> *new_conn_queue; <span class="comment">/* queue of new connections to handle */</span>
+<a name="l00295"></a>00295 } <a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">LIBEVENT_THREAD</a>;
+<a name="l00296"></a>00296 
+<a name="l00300"></a><a class="code" href="memcached_8h.html#6b845d48e30cbb66add29598de2e00a6">00300</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structconn.html">conn</a> <a class="code" href="structconn.html">conn</a>;
+<a name="l00301"></a><a class="code" href="structconn.html">00301</a> <span class="keyword">struct </span><a class="code" href="structconn.html">conn</a> {
+<a name="l00302"></a><a class="code" href="structconn.html#37f7969ba27e8ae9461a1d3b378351d6">00302</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#37f7969ba27e8ae9461a1d3b378351d6">sfd</a>;
+<a name="l00303"></a><a class="code" href="structconn.html#17e40cc90c3669ee5e50df2ded95c3d0">00303</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="Possible states of a connection.">conn_states</a>  <a class="code" href="structconn.html#17e40cc90c3669ee5e50df2ded95c3d0">state</a>;
+<a name="l00304"></a><a class="code" href="structconn.html#b0cc8eac6501657700093908c092ed3e">00304</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#e281f6c321ed03cfb642a50e205177c7">bin_substates</a> <a class="code" href="structconn.html#b0cc8eac6501657700093908c092ed3e">substate</a>;
+<a name="l00305"></a><a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">00305</a>     <span class="keyword">struct </span><a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">event</a> <a class="code" href="structconn.html#f1b2df9ad39a82ce06a008b1b04567c3">event</a>;
+<a name="l00306"></a><a class="code" href="structconn.html#523af570f5630fb5c1aaf51d87c96abc">00306</a>     <span class="keywordtype">short</span>  <a class="code" href="structconn.html#523af570f5630fb5c1aaf51d87c96abc">ev_flags</a>;
+<a name="l00307"></a><a class="code" href="structconn.html#d4b85274b88921db50c2a221386ca5fe">00307</a>     <span class="keywordtype">short</span>  <a class="code" href="structconn.html#d4b85274b88921db50c2a221386ca5fe">which</a>;   
+<a name="l00309"></a><a class="code" href="structconn.html#c0b276582776af667fe88bf6a73a57b1">00309</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#c0b276582776af667fe88bf6a73a57b1" title="which events were just triggered">rbuf</a>;   
+<a name="l00310"></a><a class="code" href="structconn.html#321f9c23c4a20d15d16630c5648ac41a">00310</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#321f9c23c4a20d15d16630c5648ac41a" title="buffer to read commands into">rcurr</a>;  
+<a name="l00311"></a><a class="code" href="structconn.html#fd9d7b8a1c2cdba5edd4772fae8adc23">00311</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#fd9d7b8a1c2cdba5edd4772fae8adc23" title="but if we parsed some already, this is where we stopped">rsize</a>;   
+<a name="l00312"></a><a class="code" href="structconn.html#4a7eed4d30ba338ae092ec2011e21982">00312</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4a7eed4d30ba338ae092ec2011e21982" title="total allocated size of rbuf">rbytes</a>;  
+<a name="l00314"></a><a class="code" href="structconn.html#b7bcc3e0bf2d962d2f7aad53c6b523b7">00314</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#b7bcc3e0bf2d962d2f7aad53c6b523b7" title="how much data, starting from rcur, do we have unparsed">wbuf</a>;
+<a name="l00315"></a><a class="code" href="structconn.html#d509acb6e118d4ff9991c4592ed4a544">00315</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#d509acb6e118d4ff9991c4592ed4a544">wcurr</a>;
+<a name="l00316"></a><a class="code" href="structconn.html#db55062a3fa6dcacae12144f8756eb0f">00316</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#db55062a3fa6dcacae12144f8756eb0f">wsize</a>;
+<a name="l00317"></a><a class="code" href="structconn.html#5df3a395efeb81c9ea517a81338ba1df">00317</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#5df3a395efeb81c9ea517a81338ba1df">wbytes</a>;
+<a name="l00319"></a><a class="code" href="structconn.html#3e8b2f5988a9791a105de7534aa8b29f">00319</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="Possible states of a connection.">conn_states</a>  <a class="code" href="structconn.html#3e8b2f5988a9791a105de7534aa8b29f" title="which state to go into after finishing current write">write_and_go</a>;
+<a name="l00320"></a><a class="code" href="structconn.html#6dff98252f504190f1f3412650ef5da4">00320</a>     <span class="keywordtype">void</span>   *<a class="code" href="structconn.html#6dff98252f504190f1f3412650ef5da4">write_and_free</a>; 
+<a name="l00322"></a><a class="code" href="structconn.html#28de9d8a5b9432c6f4ad521fc7875ea8">00322</a>     <span class="keywordtype">char</span>   *<a class="code" href="structconn.html#28de9d8a5b9432c6f4ad521fc7875ea8" title="free this memory after finishing writing">ritem</a>;  
+<a name="l00323"></a><a class="code" href="structconn.html#47f8791b09c3105ecca911bea9b73406">00323</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#47f8791b09c3105ecca911bea9b73406" title="when we read in an item&amp;#39;s value, it goes here">rlbytes</a>;
+<a name="l00324"></a>00324 
+<a name="l00325"></a>00325     <span class="comment">/* data for the nread state */</span>
 <a name="l00326"></a>00326 
-<a name="l00327"></a><a class="code" href="structconn.html#ef35eff4856a49adaee2299596a00988">00327</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a>;   <span class="comment">/* which protocol this connection speaks */</span>
-<a name="l00328"></a>00328 
-<a name="l00329"></a>00329     <span class="comment">/* data for UDP clients */</span>
-<a name="l00330"></a><a class="code" href="structconn.html#40f2af0bb917ca015ad366811e950ee0">00330</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#40f2af0bb917ca015ad366811e950ee0">request_id</a>; <span class="comment">/* Incoming UDP request ID, if this is a UDP "connection" */</span>
-<a name="l00331"></a><a class="code" href="structconn.html#cb126c7b0c4b0513fb1bfa40189407d1">00331</a>     <span class="keyword">struct </span>sockaddr <a class="code" href="structconn.html#cb126c7b0c4b0513fb1bfa40189407d1">request_addr</a>; <span class="comment">/* Who sent the most recent request */</span>
-<a name="l00332"></a><a class="code" href="structconn.html#d5589e72b5427937e81116f846e20380">00332</a>     socklen_t <a class="code" href="structconn.html#d5589e72b5427937e81116f846e20380">request_addr_size</a>;
-<a name="l00333"></a><a class="code" href="structconn.html#c98cb4f13ddb0a4c8682c8764ee21ec0">00333</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *<a class="code" href="structconn.html#c98cb4f13ddb0a4c8682c8764ee21ec0">hdrbuf</a>; <span class="comment">/* udp packet headers */</span>
-<a name="l00334"></a><a class="code" href="structconn.html#a58fbb1de414bafa4d2fb5d6568194aa">00334</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a58fbb1de414bafa4d2fb5d6568194aa">hdrsize</a>;   <span class="comment">/* number of headers' worth of space is allocated */</span>
-<a name="l00335"></a>00335 
-<a name="l00336"></a><a class="code" href="structconn.html#5f59d93a1fb729ab33b66e3cf15e8466">00336</a>     <span class="keywordtype">bool</span>   <a class="code" href="structconn.html#5f59d93a1fb729ab33b66e3cf15e8466">noreply</a>;   <span class="comment">/* True if the reply should not be sent. */</span>
-<a name="l00337"></a>00337     <span class="comment">/* current stats command */</span>
-<a name="l00338"></a>00338     <span class="keyword">struct </span>{
-<a name="l00339"></a><a class="code" href="structconn.html#e58d1fb50279ca7d206e32707ff477f6">00339</a>         <span class="keywordtype">char</span> *<a class="code" href="structconn.html#e58d1fb50279ca7d206e32707ff477f6">buffer</a>;
-<a name="l00340"></a><a class="code" href="structconn.html#b5d5df899a9e2dc1dfc8aec8afa68c64">00340</a>         <span class="keywordtype">size_t</span> <a class="code" href="structconn.html#b5d5df899a9e2dc1dfc8aec8afa68c64">size</a>;
-<a name="l00341"></a><a class="code" href="structconn.html#f796a28dffee965d3b331631fbbcc15d">00341</a>         <span class="keywordtype">size_t</span> <a class="code" href="structconn.html#f796a28dffee965d3b331631fbbcc15d">offset</a>;
-<a name="l00342"></a>00342     } <a class="code" href="structstats.html">stats</a>;
-<a name="l00343"></a>00343 
-<a name="l00344"></a>00344     <span class="comment">/* Binary protocol stuff */</span>
-<a name="l00345"></a>00345     <span class="comment">/* This is where the binary header goes */</span>
-<a name="l00346"></a><a class="code" href="structconn.html#4a5d7aea30c74698d48daef7bd8c777d">00346</a>     <a class="code" href="unionprotocol__binary__request__header.html" title="Definition of the header structure for a request packet.">protocol_binary_request_header</a> <a class="code" href="structconn.html#4a5d7aea30c74698d48daef7bd8c777d">binary_header</a>;
-<a name="l00347"></a><a class="code" href="structconn.html#17e41fed262e75fc9a78c5df4828dd10">00347</a>     uint64_t <a class="code" href="structconn.html#17e41fed262e75fc9a78c5df4828dd10">cas</a>; <span class="comment">/* the cas to return */</span>
-<a name="l00348"></a><a class="code" href="structconn.html#57c6c7f94cf0969745a2683ebd17e0e7">00348</a>     <span class="keywordtype">short</span> <a class="code" href="structconn.html#57c6c7f94cf0969745a2683ebd17e0e7">cmd</a>; <span class="comment">/* current command being processed */</span>
-<a name="l00349"></a><a class="code" href="structconn.html#60681e2946e7ee0f6fa3433168764a3e">00349</a>     <span class="keywordtype">int</span> <a class="code" href="structconn.html#60681e2946e7ee0f6fa3433168764a3e">opaque</a>;
-<a name="l00350"></a><a class="code" href="structconn.html#5d99d3fe7e8dcc919ea5d94dbadcc7cd">00350</a>     <span class="keywordtype">int</span> <a class="code" href="structconn.html#5d99d3fe7e8dcc919ea5d94dbadcc7cd">keylen</a>;
-<a name="l00351"></a><a class="code" href="structconn.html#833a1cdb64edd1dd0784c16389135bba">00351</a>     <a class="code" href="structconn.html">conn</a>   *<a class="code" href="structconn.html#833a1cdb64edd1dd0784c16389135bba">next</a>;     <span class="comment">/* Used for generating a list of conn structures */</span>
-<a name="l00352"></a><a class="code" href="structconn.html#40d01c887098f08dfc57968eec68d52f">00352</a>     <a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">LIBEVENT_THREAD</a> *<a class="code" href="structconn.html#40d01c887098f08dfc57968eec68d52f">thread</a>; <span class="comment">/* Pointer to the thread object serving this connection */</span>
-<a name="l00353"></a>00353 };
-<a name="l00354"></a>00354 
-<a name="l00355"></a>00355 
-<a name="l00356"></a>00356 <span class="comment">/* current time of day (updated periodically) */</span>
-<a name="l00357"></a>00357 <span class="keyword">extern</span> <span class="keyword">volatile</span> <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> <a class="code" href="globals_8c.html#21b2a3d4ff751fe99cdca2d14babc559">current_time</a>;
+<a name="l00333"></a><a class="code" href="structconn.html#7d40cb08fdb16c8cad53b9c78c542e65">00333</a>     <span class="keywordtype">void</span>   *<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>;     <span class="comment">/* for commands set/add/replace  */</span>
+<a name="l00334"></a>00334 
+<a name="l00335"></a>00335     <span class="comment">/* data for the swallow state */</span>
+<a name="l00336"></a><a class="code" href="structconn.html#5f95cd3a1e8b56dd5af48534162d4188">00336</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#5f95cd3a1e8b56dd5af48534162d4188">sbytes</a>;    <span class="comment">/* how many bytes to swallow */</span>
+<a name="l00337"></a>00337 
+<a name="l00338"></a>00338     <span class="comment">/* data for the mwrite state */</span>
+<a name="l00339"></a><a class="code" href="structconn.html#7fa506eb093e715dba7c51e373adf332">00339</a>     <span class="keyword">struct </span>iovec *<a class="code" href="structconn.html#7fa506eb093e715dba7c51e373adf332">iov</a>;
+<a name="l00340"></a><a class="code" href="structconn.html#a9e54ceb57a50b642bb6733f654f67ef">00340</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a9e54ceb57a50b642bb6733f654f67ef">iovsize</a>;   <span class="comment">/* number of elements allocated in iov[] */</span>
+<a name="l00341"></a><a class="code" href="structconn.html#4bfd124c25febb5c0473a64010a5e04c">00341</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4bfd124c25febb5c0473a64010a5e04c">iovused</a>;   <span class="comment">/* number of elements used in iov[] */</span>
+<a name="l00342"></a>00342 
+<a name="l00343"></a><a class="code" href="structconn.html#5ecb2828d6d2bd7d2e1bbe39d16ec5b9">00343</a>     <span class="keyword">struct </span>msghdr *<a class="code" href="structconn.html#5ecb2828d6d2bd7d2e1bbe39d16ec5b9">msglist</a>;
+<a name="l00344"></a><a class="code" href="structconn.html#4a88af6a9aa8f5723163ce46109d424e">00344</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#4a88af6a9aa8f5723163ce46109d424e">msgsize</a>;   <span class="comment">/* number of elements allocated in msglist[] */</span>
+<a name="l00345"></a><a class="code" href="structconn.html#64b2e5b69fad86aa6f298c055fc96aae">00345</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#64b2e5b69fad86aa6f298c055fc96aae">msgused</a>;   <span class="comment">/* number of elements used in msglist[] */</span>
+<a name="l00346"></a><a class="code" href="structconn.html#a154e25e69a11d7837749a50523a60ea">00346</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a154e25e69a11d7837749a50523a60ea">msgcurr</a>;   <span class="comment">/* element in msglist[] being transmitted now */</span>
+<a name="l00347"></a><a class="code" href="structconn.html#dccea2771b5da3455ec501d046bbfbb2">00347</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#dccea2771b5da3455ec501d046bbfbb2">msgbytes</a>;  <span class="comment">/* number of bytes in current msg */</span>
+<a name="l00348"></a>00348 
+<a name="l00349"></a><a class="code" href="structconn.html#3f8edd0d1efc80f5d9e1f519581d459e">00349</a>     <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>   **<a class="code" href="structconn.html#3f8edd0d1efc80f5d9e1f519581d459e">ilist</a>;   <span class="comment">/* list of items to write out */</span>
+<a name="l00350"></a><a class="code" href="structconn.html#864209402985a2c5fa5a5215f1dfe8dc">00350</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#864209402985a2c5fa5a5215f1dfe8dc">isize</a>;
+<a name="l00351"></a><a class="code" href="structconn.html#496919c8fa5cdbfba62d8d8beb7bddae">00351</a>     <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>   **<a class="code" href="structconn.html#496919c8fa5cdbfba62d8d8beb7bddae">icurr</a>;
+<a name="l00352"></a><a class="code" href="structconn.html#ecd54059ef51d05fcb5cfdb9c7317903">00352</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#ecd54059ef51d05fcb5cfdb9c7317903">ileft</a>;
+<a name="l00353"></a>00353 
+<a name="l00354"></a><a class="code" href="structconn.html#75d646e58527bdaa2416942097938c93">00354</a>     <span class="keywordtype">char</span>   **<a class="code" href="structconn.html#75d646e58527bdaa2416942097938c93">suffixlist</a>;
+<a name="l00355"></a><a class="code" href="structconn.html#aea0ce1e0d7986281960a6a7a063e701">00355</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#aea0ce1e0d7986281960a6a7a063e701">suffixsize</a>;
+<a name="l00356"></a><a class="code" href="structconn.html#24bdb9aaa257aeacfa8703c6f0a808da">00356</a>     <span class="keywordtype">char</span>   **<a class="code" href="structconn.html#24bdb9aaa257aeacfa8703c6f0a808da">suffixcurr</a>;
+<a name="l00357"></a><a class="code" href="structconn.html#7b1984060d5b4b2aea26905718cb42c8">00357</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#7b1984060d5b4b2aea26905718cb42c8">suffixleft</a>;
 <a name="l00358"></a>00358 
-<a name="l00359"></a>00359 <span class="comment">/*</span>
-<a name="l00360"></a>00360 <span class="comment"> * Functions</span>
-<a name="l00361"></a>00361 <span class="comment"> */</span>
-<a name="l00362"></a>00362 <span class="keywordtype">void</span> <a class="code" href="memcached_8c.html#b3208d47b8d38af6818f6ced54e4d62c">do_accept_new_conns</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> do_accept);
-<a name="l00363"></a>00363 <span class="keywordtype">char</span> *<a class="code" href="memcached_8c.html#fecf346316b0c6852f5568ecd6440cf7">do_add_delta</a>(<a class="code" href="structconn.html">conn</a> *c, <a class="code" href="struct__stritem.html">item</a> *<a class="code" href="struct__stritem.html">item</a>, <span class="keyword">const</span> <span class="keywordtype">bool</span> incr, <span class="keyword">const</span> int64_t delta,
-<a name="l00364"></a>00364                    <span class="keywordtype">char</span> *buf);
-<a name="l00365"></a>00365 <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> <a class="code" href="memcached_8c.html#7d76af30e49baebcf82c13f241352544">do_store_item</a>(<a class="code" href="struct__stritem.html">item</a> *<a class="code" href="struct__stritem.html">item</a>, <span class="keywordtype">int</span> comm, <a class="code" href="structconn.html">conn</a>* c);
-<a name="l00366"></a>00366 <a class="code" href="structconn.html">conn</a> *<a class="code" href="memcached_8c.html#f6f04a62bdce44ee52f3a247f6df38ee">conn_new</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> sfd, <span class="keyword">const</span> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="NOTE: If you modify this table you _MUST_ update the function state_text.">conn_states</a> init_state, <span class="keyword">const</span> <span class="keywordtype">int</span> event_flags, <span class="keyword">const</span> <span class="keywordtype">int</span> read_buffer_size, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> prot, <span class="keyword">struct</span> event_base *base);
-<a name="l00367"></a>00367 <span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="daemon_8c.html#78ff9cfa411dda44b12c1dd5e5d078e6">daemonize</a>(<span class="keywordtype">int</span> nochdir, <span class="keywordtype">int</span> noclose);
-<a name="l00368"></a>00368 
-<a name="l00369"></a>00369 
-<a name="l00370"></a>00370 <span class="preprocessor">#include "<a class="code" href="stats_8h.html">stats.h</a>"</span>
-<a name="l00371"></a>00371 <span class="preprocessor">#include "<a class="code" href="slabs_8h.html">slabs.h</a>"</span>
-<a name="l00372"></a>00372 <span class="preprocessor">#include "<a class="code" href="assoc_8h.html">assoc.h</a>"</span>
-<a name="l00373"></a>00373 <span class="preprocessor">#include "<a class="code" href="items_8h.html">items.h</a>"</span>
-<a name="l00374"></a>00374 <span class="preprocessor">#include "<a class="code" href="trace_8h.html">trace.h</a>"</span>
-<a name="l00375"></a>00375 <span class="preprocessor">#include "<a class="code" href="hash_8h.html">hash.h</a>"</span>
-<a name="l00376"></a>00376 <span class="preprocessor">#include "<a class="code" href="util_8h.html">util.h</a>"</span>
-<a name="l00377"></a>00377 
-<a name="l00378"></a>00378 <span class="comment">/*</span>
-<a name="l00379"></a>00379 <span class="comment"> * Functions such as the libevent-related calls that need to do cross-thread</span>
-<a name="l00380"></a>00380 <span class="comment"> * communication in multithreaded mode (rather than actually doing the work</span>
-<a name="l00381"></a>00381 <span class="comment"> * in the current thread) are called via "dispatch_" frontends, which are</span>
-<a name="l00382"></a>00382 <span class="comment"> * also #define-d to directly call the underlying code in singlethreaded mode.</span>
-<a name="l00383"></a>00383 <span class="comment"> */</span>
-<a name="l00384"></a>00384 
-<a name="l00385"></a>00385 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#79051074704249cac4424f10d4606fe3">thread_init</a>(<span class="keywordtype">int</span> nthreads, <span class="keyword">struct</span> event_base *main_base);
-<a name="l00386"></a>00386 <span class="keywordtype">int</span>  <a class="code" href="memcached_8h.html#1e1a527b3b57614f719a40d83941b8fc">dispatch_event_add</a>(<span class="keywordtype">int</span> thread, <a class="code" href="structconn.html">conn</a> *c);
-<a name="l00387"></a>00387 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#04c3e20b71072223654c0bbf7c266173">dispatch_conn_new</a>(<span class="keywordtype">int</span> sfd, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="NOTE: If you modify this table you _MUST_ update the function state_text.">conn_states</a> init_state, <span class="keywordtype">int</span> event_flags, <span class="keywordtype">int</span> read_buffer_size, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> prot);
-<a name="l00388"></a>00388 
-<a name="l00389"></a>00389 <span class="comment">/* Lock wrappers for cache functions that are called from main loop. */</span>
-<a name="l00390"></a>00390 <span class="keywordtype">char</span> *<a class="code" href="memcached_8h.html#9541b45b4a663dbdc0c69e8a7334700e">add_delta</a>(<a class="code" href="structconn.html">conn</a> *c, <a class="code" href="struct__stritem.html">item</a> *<a class="code" href="struct__stritem.html">item</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> incr, <span class="keyword">const</span> int64_t delta,
-<a name="l00391"></a>00391                 <span class="keywordtype">char</span> *buf);
-<a name="l00392"></a>00392 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#4626562440107c11cdd7cc07ba28f806">accept_new_conns</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> do_accept);
-<a name="l00393"></a>00393 <a class="code" href="structconn.html">conn</a> *<a class="code" href="memcached_8c.html#9e2eb84fb0639f05a759367bf8b5ddb9">conn_from_freelist</a>(<span class="keywordtype">void</span>);
-<a name="l00394"></a>00394 <span class="keywordtype">bool</span>  <a class="code" href="memcached_8c.html#fc9ec43a3d82ca2bbaa216539353bfa2">conn_add_to_freelist</a>(<a class="code" href="structconn.html">conn</a> *c);
-<a name="l00395"></a>00395 <span class="keywordtype">char</span> *<a class="code" href="memcached_8c.html#396712f7649a6f9fe31f4ff91f70c0a3">suffix_from_freelist</a>(<span class="keywordtype">void</span>);
-<a name="l00396"></a>00396 <span class="keywordtype">bool</span>  <a class="code" href="memcached_8c.html#68f689a3de71d789243a8983a0db3c79">suffix_add_to_freelist</a>(<span class="keywordtype">char</span> *s);
-<a name="l00397"></a>00397 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#f354b347a944d96a5a7644f9e84e7e7e">is_listen_thread</a>(<span class="keywordtype">void</span>);
-<a name="l00398"></a>00398 <a class="code" href="struct__stritem.html">item</a> *<a class="code" href="memcached_8h.html#d69cc14d059b72c07e1f0b550b1922c6">item_alloc</a>(<span class="keywordtype">char</span> *key, <span class="keywordtype">size_t</span> nkey, <span class="keywordtype">int</span> flags, <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> exptime, <span class="keywordtype">int</span> nbytes);
-<a name="l00399"></a>00399 <span class="keywordtype">char</span> *<a class="code" href="memcached_8h.html#66464e83dfd7f7e38702614fb645ba4c">item_cachedump</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="slabs_8c.html#89e035684df4bb1ef8b0852cb2c20f00" title="Given object size, return id to use when allocating/freeing memory for object 0 means...">slabs_clsid</a>, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> limit, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> *bytes);
-<a name="l00400"></a>00400 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#e00be629a8cd99870497ffc47b40740a">item_flush_expired</a>(<span class="keywordtype">void</span>);
-<a name="l00401"></a>00401 <a class="code" href="struct__stritem.html">item</a> *<a class="code" href="memcached_8h.html#1ff584f7053e4a5c8f2cffc7186a12aa">item_get</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *key, <span class="keyword">const</span> <span class="keywordtype">size_t</span> nkey);
-<a name="l00402"></a>00402 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#9e23e4fb572f5bc484a30eed591f9b36">item_link</a>(<a class="code" href="struct__stritem.html">item</a> *it);
-<a name="l00403"></a>00403 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#f445e1464df9a37165a06525af3ea31e">item_remove</a>(<a class="code" href="struct__stritem.html">item</a> *it);
-<a name="l00404"></a>00404 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#2920cc5a90ae6ca85b3dd4b786ac355e">item_replace</a>(<a class="code" href="struct__stritem.html">item</a> *it, <a class="code" href="struct__stritem.html">item</a> *new_it);
-<a name="l00405"></a>00405 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#2b022c04b5ceac327d82762206f51ca8">item_stats</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
-<a name="l00406"></a>00406 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#76a67af22fe6ce802c07e857f06cbdc8">item_stats_sizes</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
-<a name="l00407"></a>00407 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#0c242af4a01ed7d11beacef1ce98775a">item_unlink</a>(<a class="code" href="struct__stritem.html">item</a> *it);
-<a name="l00408"></a>00408 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#cbd05e36703d8da891e7c1a47a684941">item_update</a>(<a class="code" href="struct__stritem.html">item</a> *it);
+<a name="l00359"></a><a class="code" href="structconn.html#ef35eff4856a49adaee2299596a00988">00359</a>     <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a>;   <span class="comment">/* which protocol this connection speaks */</span>
+<a name="l00360"></a>00360 
+<a name="l00361"></a>00361     <span class="comment">/* data for UDP clients */</span>
+<a name="l00362"></a><a class="code" href="structconn.html#40f2af0bb917ca015ad366811e950ee0">00362</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#40f2af0bb917ca015ad366811e950ee0">request_id</a>; <span class="comment">/* Incoming UDP request ID, if this is a UDP "connection" */</span>
+<a name="l00363"></a><a class="code" href="structconn.html#cb126c7b0c4b0513fb1bfa40189407d1">00363</a>     <span class="keyword">struct </span>sockaddr <a class="code" href="structconn.html#cb126c7b0c4b0513fb1bfa40189407d1">request_addr</a>; <span class="comment">/* Who sent the most recent request */</span>
+<a name="l00364"></a><a class="code" href="structconn.html#d5589e72b5427937e81116f846e20380">00364</a>     socklen_t <a class="code" href="structconn.html#d5589e72b5427937e81116f846e20380">request_addr_size</a>;
+<a name="l00365"></a><a class="code" href="structconn.html#c98cb4f13ddb0a4c8682c8764ee21ec0">00365</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *<a class="code" href="structconn.html#c98cb4f13ddb0a4c8682c8764ee21ec0">hdrbuf</a>; <span class="comment">/* udp packet headers */</span>
+<a name="l00366"></a><a class="code" href="structconn.html#a58fbb1de414bafa4d2fb5d6568194aa">00366</a>     <span class="keywordtype">int</span>    <a class="code" href="structconn.html#a58fbb1de414bafa4d2fb5d6568194aa">hdrsize</a>;   <span class="comment">/* number of headers' worth of space is allocated */</span>
+<a name="l00367"></a>00367 
+<a name="l00368"></a><a class="code" href="structconn.html#5f59d93a1fb729ab33b66e3cf15e8466">00368</a>     <span class="keywordtype">bool</span>   <a class="code" href="structconn.html#5f59d93a1fb729ab33b66e3cf15e8466">noreply</a>;   <span class="comment">/* True if the reply should not be sent. */</span>
+<a name="l00369"></a>00369     <span class="comment">/* current stats command */</span>
+<a name="l00370"></a>00370     <span class="keyword">struct </span>{
+<a name="l00371"></a><a class="code" href="structconn.html#e58d1fb50279ca7d206e32707ff477f6">00371</a>         <span class="keywordtype">char</span> *<a class="code" href="structconn.html#e58d1fb50279ca7d206e32707ff477f6">buffer</a>;
+<a name="l00372"></a><a class="code" href="structconn.html#b5d5df899a9e2dc1dfc8aec8afa68c64">00372</a>         <span class="keywordtype">size_t</span> <a class="code" href="structconn.html#b5d5df899a9e2dc1dfc8aec8afa68c64">size</a>;
+<a name="l00373"></a><a class="code" href="structconn.html#f796a28dffee965d3b331631fbbcc15d">00373</a>         <span class="keywordtype">size_t</span> <a class="code" href="structconn.html#f796a28dffee965d3b331631fbbcc15d">offset</a>;
+<a name="l00374"></a>00374     } <a class="code" href="structstats.html" title="Global stats.">stats</a>;
+<a name="l00375"></a>00375 
+<a name="l00376"></a>00376     <span class="comment">/* Binary protocol stuff */</span>
+<a name="l00377"></a>00377     <span class="comment">/* This is where the binary header goes */</span>
+<a name="l00378"></a><a class="code" href="structconn.html#4a5d7aea30c74698d48daef7bd8c777d">00378</a>     <a class="code" href="unionprotocol__binary__request__header.html" title="Definition of the header structure for a request packet.">protocol_binary_request_header</a> <a class="code" href="structconn.html#4a5d7aea30c74698d48daef7bd8c777d">binary_header</a>;
+<a name="l00379"></a><a class="code" href="structconn.html#17e41fed262e75fc9a78c5df4828dd10">00379</a>     uint64_t <a class="code" href="structconn.html#17e41fed262e75fc9a78c5df4828dd10">cas</a>; <span class="comment">/* the cas to return */</span>
+<a name="l00380"></a><a class="code" href="structconn.html#57c6c7f94cf0969745a2683ebd17e0e7">00380</a>     <span class="keywordtype">short</span> <a class="code" href="structconn.html#57c6c7f94cf0969745a2683ebd17e0e7">cmd</a>; <span class="comment">/* current command being processed */</span>
+<a name="l00381"></a><a class="code" href="structconn.html#60681e2946e7ee0f6fa3433168764a3e">00381</a>     <span class="keywordtype">int</span> <a class="code" href="structconn.html#60681e2946e7ee0f6fa3433168764a3e">opaque</a>;
+<a name="l00382"></a><a class="code" href="structconn.html#5d99d3fe7e8dcc919ea5d94dbadcc7cd">00382</a>     <span class="keywordtype">int</span> <a class="code" href="structconn.html#5d99d3fe7e8dcc919ea5d94dbadcc7cd">keylen</a>;
+<a name="l00383"></a><a class="code" href="structconn.html#833a1cdb64edd1dd0784c16389135bba">00383</a>     <a class="code" href="structconn.html">conn</a>   *<a class="code" href="structconn.html#833a1cdb64edd1dd0784c16389135bba">next</a>;     <span class="comment">/* Used for generating a list of conn structures */</span>
+<a name="l00384"></a><a class="code" href="structconn.html#40d01c887098f08dfc57968eec68d52f">00384</a>     <a class="code" href="struct_l_i_b_e_v_e_n_t___t_h_r_e_a_d.html">LIBEVENT_THREAD</a> *<a class="code" href="structconn.html#40d01c887098f08dfc57968eec68d52f">thread</a>; <span class="comment">/* Pointer to the thread object serving this connection */</span>
+<a name="l00385"></a>00385 };
+<a name="l00386"></a>00386 
+<a name="l00387"></a>00387 
+<a name="l00388"></a>00388 <span class="comment">/* current time of day (updated periodically) */</span>
+<a name="l00389"></a>00389 <span class="keyword">extern</span> <span class="keyword">volatile</span> <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> <a class="code" href="globals_8c.html#21b2a3d4ff751fe99cdca2d14babc559">current_time</a>;
+<a name="l00390"></a>00390 
+<a name="l00391"></a>00391 <span class="comment">/*</span>
+<a name="l00392"></a>00392 <span class="comment"> * Functions</span>
+<a name="l00393"></a>00393 <span class="comment"> */</span>
+<a name="l00394"></a>00394 <span class="keywordtype">void</span> <a class="code" href="memcached_8c.html#b3208d47b8d38af6818f6ced54e4d62c">do_accept_new_conns</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> do_accept);
+<a name="l00395"></a>00395 <span class="keywordtype">char</span> *<a class="code" href="memcached_8c.html#fecf346316b0c6852f5568ecd6440cf7">do_add_delta</a>(<a class="code" href="structconn.html">conn</a> *c, <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>, <span class="keyword">const</span> <span class="keywordtype">bool</span> incr, <span class="keyword">const</span> int64_t delta,
+<a name="l00396"></a>00396                    <span class="keywordtype">char</span> *buf);
+<a name="l00397"></a>00397 <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> <a class="code" href="memcached_8c.html#7d76af30e49baebcf82c13f241352544">do_store_item</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>, <span class="keywordtype">int</span> comm, <a class="code" href="structconn.html">conn</a>* c);
+<a name="l00398"></a>00398 <a class="code" href="structconn.html">conn</a> *<a class="code" href="memcached_8c.html#f6f04a62bdce44ee52f3a247f6df38ee">conn_new</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> sfd, <span class="keyword">const</span> <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="Possible states of a connection.">conn_states</a> init_state, <span class="keyword">const</span> <span class="keywordtype">int</span> event_flags, <span class="keyword">const</span> <span class="keywordtype">int</span> read_buffer_size, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> prot, <span class="keyword">struct</span> event_base *base);
+<a name="l00399"></a>00399 <span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="daemon_8c.html#78ff9cfa411dda44b12c1dd5e5d078e6">daemonize</a>(<span class="keywordtype">int</span> nochdir, <span class="keywordtype">int</span> noclose);
+<a name="l00400"></a>00400 
+<a name="l00401"></a>00401 
+<a name="l00402"></a>00402 <span class="preprocessor">#include "<a class="code" href="stats_8h.html">stats.h</a>"</span>
+<a name="l00403"></a>00403 <span class="preprocessor">#include "<a class="code" href="slabs_8h.html">slabs.h</a>"</span>
+<a name="l00404"></a>00404 <span class="preprocessor">#include "<a class="code" href="assoc_8h.html">assoc.h</a>"</span>
+<a name="l00405"></a>00405 <span class="preprocessor">#include "<a class="code" href="items_8h.html">items.h</a>"</span>
+<a name="l00406"></a>00406 <span class="preprocessor">#include "<a class="code" href="trace_8h.html">trace.h</a>"</span>
+<a name="l00407"></a>00407 <span class="preprocessor">#include "<a class="code" href="hash_8h.html">hash.h</a>"</span>
+<a name="l00408"></a>00408 <span class="preprocessor">#include "<a class="code" href="util_8h.html">util.h</a>"</span>
 <a name="l00409"></a>00409 
-<a name="l00410"></a>00410 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#841571aaa5b597a35565f8e12d164a59">STATS_LOCK</a>(<span class="keywordtype">void</span>);
-<a name="l00411"></a>00411 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#255149a6925c7daf8dbee2d867a36056">STATS_UNLOCK</a>(<span class="keywordtype">void</span>);
-<a name="l00412"></a>00412 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#7bcb5bc469e4b71ebb523e8e1b7caf95">threadlocal_stats_reset</a>(<span class="keywordtype">void</span>);
-<a name="l00413"></a>00413 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#a2a47a4050d3821422922a7f45611ae9">threadlocal_stats_aggregate</a>(<span class="keyword">struct</span> <a class="code" href="structthread__stats.html">thread_stats</a> *<a class="code" href="structstats.html">stats</a>);
-<a name="l00414"></a>00414 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#9a8ed232ef10f74bc05293d3435f0b8f">slab_stats_aggregate</a>(<span class="keyword">struct</span> <a class="code" href="structthread__stats.html">thread_stats</a> *<a class="code" href="structstats.html">stats</a>, <span class="keyword">struct</span> <a class="code" href="structslab__stats.html">slab_stats</a> *out);
-<a name="l00415"></a>00415 
-<a name="l00416"></a>00416 <span class="comment">/* Stat processing functions */</span>
-<a name="l00417"></a>00417 <span class="keywordtype">void</span> <a class="code" href="memcached_8c.html#ca748357457307f8d993dc73c3350afe">append_stat</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30">ADD_STAT</a> add_stats, <a class="code" href="structconn.html">conn</a> *c,
-<a name="l00418"></a>00418                  <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, ...);
-<a name="l00419"></a>00419 
-<a name="l00420"></a>00420 <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> <a class="code" href="memcached_8h.html#c97ce2cadaeb4fe6524c0df01828c232">store_item</a>(<a class="code" href="struct__stritem.html">item</a> *<a class="code" href="struct__stritem.html">item</a>, <span class="keywordtype">int</span> comm, <a class="code" href="structconn.html">conn</a> *c);
-<a name="l00421"></a>00421 
-<a name="l00422"></a>00422 <span class="preprocessor">#if HAVE_DROP_PRIVILEGES</span>
-<a name="l00423"></a>00423 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#9f5cbeb31c236a1eb0d5c343b2a5568c">drop_privileges</a>();
-<a name="l00424"></a>00424 <span class="preprocessor">#else</span>
-<a name="l00425"></a><a class="code" href="memcached_8h.html#9f5cbeb31c236a1eb0d5c343b2a5568c">00425</a> <span class="preprocessor"></span><span class="preprocessor">#define drop_privileges()</span>
-<a name="l00426"></a>00426 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00427"></a>00427 <span class="preprocessor"></span>
-<a name="l00428"></a>00428 <span class="comment">/* If supported, give compiler hints for branch prediction. */</span>
-<a name="l00429"></a>00429 <span class="preprocessor">#if !defined(__GNUC__) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 96)</span>
-<a name="l00430"></a><a class="code" href="memcached_8h.html#2d68e635cffd81dd153ce8330c1b30d4">00430</a> <span class="preprocessor"></span><span class="preprocessor">#define __builtin_expect(x, expected_value) (x)</span>
-<a name="l00431"></a>00431 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00432"></a>00432 <span class="preprocessor"></span>
-<a name="l00433"></a><a class="code" href="memcached_8h.html#217a0bd562b98ae8c2ffce44935351e1">00433</a> <span class="preprocessor">#define likely(x)       __builtin_expect((x),1)</span>
-<a name="l00434"></a><a class="code" href="memcached_8h.html#c6c45889010c1bd68631771b64f18101">00434</a> <span class="preprocessor"></span><span class="preprocessor">#define unlikely(x)     __builtin_expect((x),0)</span>
+<a name="l00410"></a>00410 <span class="comment">/*</span>
+<a name="l00411"></a>00411 <span class="comment"> * Functions such as the libevent-related calls that need to do cross-thread</span>
+<a name="l00412"></a>00412 <span class="comment"> * communication in multithreaded mode (rather than actually doing the work</span>
+<a name="l00413"></a>00413 <span class="comment"> * in the current thread) are called via "dispatch_" frontends, which are</span>
+<a name="l00414"></a>00414 <span class="comment"> * also #define-d to directly call the underlying code in singlethreaded mode.</span>
+<a name="l00415"></a>00415 <span class="comment"> */</span>
+<a name="l00416"></a>00416 
+<a name="l00417"></a>00417 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#79051074704249cac4424f10d4606fe3">thread_init</a>(<span class="keywordtype">int</span> nthreads, <span class="keyword">struct</span> event_base *main_base);
+<a name="l00418"></a>00418 <span class="keywordtype">int</span>  <a class="code" href="memcached_8h.html#1e1a527b3b57614f719a40d83941b8fc">dispatch_event_add</a>(<span class="keywordtype">int</span> thread, <a class="code" href="structconn.html">conn</a> *c);
+<a name="l00419"></a>00419 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#04c3e20b71072223654c0bbf7c266173">dispatch_conn_new</a>(<span class="keywordtype">int</span> sfd, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#397f77d103168a504b5fbc801538f2a7" title="Possible states of a connection.">conn_states</a> init_state, <span class="keywordtype">int</span> event_flags, <span class="keywordtype">int</span> read_buffer_size, <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#dd2ec924c0f221790d7235ffb2e615cd">protocol</a> prot);
+<a name="l00420"></a>00420 
+<a name="l00421"></a>00421 <span class="comment">/* Lock wrappers for cache functions that are called from main loop. */</span>
+<a name="l00422"></a>00422 <span class="keywordtype">char</span> *<a class="code" href="memcached_8h.html#9541b45b4a663dbdc0c69e8a7334700e">add_delta</a>(<a class="code" href="structconn.html">conn</a> *c, <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> incr, <span class="keyword">const</span> int64_t delta,
+<a name="l00423"></a>00423                 <span class="keywordtype">char</span> *buf);
+<a name="l00424"></a>00424 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#4626562440107c11cdd7cc07ba28f806">accept_new_conns</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> do_accept);
+<a name="l00425"></a>00425 <a class="code" href="structconn.html">conn</a> *<a class="code" href="memcached_8c.html#9e2eb84fb0639f05a759367bf8b5ddb9">conn_from_freelist</a>(<span class="keywordtype">void</span>);
+<a name="l00426"></a>00426 <span class="keywordtype">bool</span>  <a class="code" href="memcached_8c.html#fc9ec43a3d82ca2bbaa216539353bfa2">conn_add_to_freelist</a>(<a class="code" href="structconn.html">conn</a> *c);
+<a name="l00427"></a>00427 <span class="keywordtype">char</span> *<a class="code" href="memcached_8c.html#396712f7649a6f9fe31f4ff91f70c0a3">suffix_from_freelist</a>(<span class="keywordtype">void</span>);
+<a name="l00428"></a>00428 <span class="keywordtype">bool</span>  <a class="code" href="memcached_8c.html#68f689a3de71d789243a8983a0db3c79">suffix_add_to_freelist</a>(<span class="keywordtype">char</span> *s);
+<a name="l00429"></a>00429 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#f354b347a944d96a5a7644f9e84e7e7e">is_listen_thread</a>(<span class="keywordtype">void</span>);
+<a name="l00430"></a>00430 <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="memcached_8h.html#d69cc14d059b72c07e1f0b550b1922c6">item_alloc</a>(<span class="keywordtype">char</span> *key, <span class="keywordtype">size_t</span> nkey, <span class="keywordtype">int</span> flags, <a class="code" href="memcached_8h.html#602ccc3d124c1c56b6afe0ae93e04bc4" title="Time relative to server start.">rel_time_t</a> exptime, <span class="keywordtype">int</span> nbytes);
+<a name="l00431"></a>00431 <span class="keywordtype">char</span> *<a class="code" href="memcached_8h.html#66464e83dfd7f7e38702614fb645ba4c">item_cachedump</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="slabs_8c.html#89e035684df4bb1ef8b0852cb2c20f00" title="Given object size, return id to use when allocating/freeing memory for object 0 means...">slabs_clsid</a>, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> limit, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> *bytes);
+<a name="l00432"></a>00432 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#e00be629a8cd99870497ffc47b40740a">item_flush_expired</a>(<span class="keywordtype">void</span>);
+<a name="l00433"></a>00433 <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="memcached_8h.html#1ff584f7053e4a5c8f2cffc7186a12aa">item_get</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *key, <span class="keyword">const</span> <span class="keywordtype">size_t</span> nkey);
+<a name="l00434"></a>00434 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#9e23e4fb572f5bc484a30eed591f9b36">item_link</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *it);
+<a name="l00435"></a>00435 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#f445e1464df9a37165a06525af3ea31e">item_remove</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *it);
+<a name="l00436"></a>00436 <span class="keywordtype">int</span>   <a class="code" href="memcached_8h.html#2920cc5a90ae6ca85b3dd4b786ac355e">item_replace</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *it, <a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *new_it);
+<a name="l00437"></a>00437 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#2b022c04b5ceac327d82762206f51ca8">item_stats</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
+<a name="l00438"></a>00438 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#76a67af22fe6ce802c07e857f06cbdc8">item_stats_sizes</a>(<a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a> add_stats, <span class="keywordtype">void</span> *c);
+<a name="l00439"></a>00439 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#0c242af4a01ed7d11beacef1ce98775a">item_unlink</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *it);
+<a name="l00440"></a>00440 <span class="keywordtype">void</span>  <a class="code" href="memcached_8h.html#cbd05e36703d8da891e7c1a47a684941">item_update</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *it);
+<a name="l00441"></a>00441 
+<a name="l00442"></a>00442 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#841571aaa5b597a35565f8e12d164a59">STATS_LOCK</a>(<span class="keywordtype">void</span>);
+<a name="l00443"></a>00443 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#255149a6925c7daf8dbee2d867a36056">STATS_UNLOCK</a>(<span class="keywordtype">void</span>);
+<a name="l00444"></a>00444 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#7bcb5bc469e4b71ebb523e8e1b7caf95">threadlocal_stats_reset</a>(<span class="keywordtype">void</span>);
+<a name="l00445"></a>00445 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#a2a47a4050d3821422922a7f45611ae9">threadlocal_stats_aggregate</a>(<span class="keyword">struct</span> <a class="code" href="structthread__stats.html" title="Stats stored per-thread.">thread_stats</a> *<a class="code" href="structstats.html" title="Global stats.">stats</a>);
+<a name="l00446"></a>00446 <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#9a8ed232ef10f74bc05293d3435f0b8f">slab_stats_aggregate</a>(<span class="keyword">struct</span> <a class="code" href="structthread__stats.html" title="Stats stored per-thread.">thread_stats</a> *<a class="code" href="structstats.html" title="Global stats.">stats</a>, <span class="keyword">struct</span> <a class="code" href="structslab__stats.html" title="Stats stored per slab (and per thread).">slab_stats</a> *out);
+<a name="l00447"></a>00447 
+<a name="l00448"></a>00448 <span class="comment">/* Stat processing functions */</span>
+<a name="l00449"></a>00449 <span class="keywordtype">void</span> <a class="code" href="memcached_8c.html#ca748357457307f8d993dc73c3350afe">append_stat</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code" href="memcached_8h.html#b8d9bd9ba0b7b765633bf9b6cbd6aa30" title="Callback for any function producing stats.">ADD_STAT</a> add_stats, <a class="code" href="structconn.html">conn</a> *c,
+<a name="l00450"></a>00450                  <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, ...);
+<a name="l00451"></a>00451 
+<a name="l00452"></a>00452 <span class="keyword">enum</span> <a class="code" href="memcached_8h.html#1cf8921762294d73fe28150b7fa2a18e">store_item_type</a> <a class="code" href="memcached_8h.html#c97ce2cadaeb4fe6524c0df01828c232">store_item</a>(<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a> *<a class="code" href="struct__stritem.html" title="Structure for storing items within memcached.">item</a>, <span class="keywordtype">int</span> comm, <a class="code" href="structconn.html">conn</a> *c);
+<a name="l00453"></a>00453 
+<a name="l00454"></a>00454 <span class="preprocessor">#if HAVE_DROP_PRIVILEGES</span>
+<a name="l00455"></a>00455 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code" href="memcached_8h.html#9f5cbeb31c236a1eb0d5c343b2a5568c">drop_privileges</a>();
+<a name="l00456"></a>00456 <span class="preprocessor">#else</span>
+<a name="l00457"></a><a class="code" href="memcached_8h.html#9f5cbeb31c236a1eb0d5c343b2a5568c">00457</a> <span class="preprocessor"></span><span class="preprocessor">#define drop_privileges()</span>
+<a name="l00458"></a>00458 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00459"></a>00459 <span class="preprocessor"></span>
+<a name="l00460"></a>00460 <span class="comment">/* If supported, give compiler hints for branch prediction. */</span>
+<a name="l00461"></a>00461 <span class="preprocessor">#if !defined(__GNUC__) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 96)</span>
+<a name="l00462"></a><a class="code" href="memcached_8h.html#2d68e635cffd81dd153ce8330c1b30d4">00462</a> <span class="preprocessor"></span><span class="preprocessor">#define __builtin_expect(x, expected_value) (x)</span>
+<a name="l00463"></a>00463 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00464"></a>00464 <span class="preprocessor"></span>
+<a name="l00465"></a><a class="code" href="memcached_8h.html#217a0bd562b98ae8c2ffce44935351e1">00465</a> <span class="preprocessor">#define likely(x)       __builtin_expect((x),1)</span>
+<a name="l00466"></a><a class="code" href="memcached_8h.html#c6c45889010c1bd68631771b64f18101">00466</a> <span class="preprocessor"></span><span class="preprocessor">#define unlikely(x)     __builtin_expect((x),0)</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 10:12:53 2009 for memcached by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Apr 17 15:08:21 2009 for memcached by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
