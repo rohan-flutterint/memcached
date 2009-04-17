@@ -1,0 +1,13 @@
+<area shape="rect" id="node3" href="$memcached_8h.html" title="The main memcached header holding commonly used data structures and function prototypes..." alt="" coords="499,83,616,112">
+<area shape="rect" id="node27" href="$cache_8c.html" title="cache.c" alt="" coords="640,83,715,112">
+<area shape="rect" id="node5" href="$assoc_8c.html" title="assoc.c" alt="" coords="5,160,77,189">
+<area shape="rect" id="node7" href="$daemon_8c.html" title="daemon.c" alt="" coords="101,160,189,189">
+<area shape="rect" id="node9" href="$globals_8c.html" title="globals.c" alt="" coords="213,160,291,189">
+<area shape="rect" id="node11" href="$hash_8c.html" title="hash.c" alt="" coords="315,160,379,189">
+<area shape="rect" id="node13" href="$items_8c.html" title="items.c" alt="" coords="403,160,475,189">
+<area shape="rect" id="node15" href="$memcached_8c.html" title="memcached.c" alt="" coords="499,160,616,189">
+<area shape="rect" id="node17" href="$sizes_8c.html" title="sizes.c" alt="" coords="640,160,707,189">
+<area shape="rect" id="node19" href="$slabs_8c.html" title="slabs.c" alt="" coords="731,160,797,189">
+<area shape="rect" id="node21" href="$stats_8c.html" title="stats.c" alt="" coords="821,160,891,189">
+<area shape="rect" id="node23" href="$thread_8c.html" title="thread.c" alt="" coords="915,160,992,189">
+<area shape="rect" id="node25" href="$util_8c.html" title="util.c" alt="" coords="1016,160,1069,189">

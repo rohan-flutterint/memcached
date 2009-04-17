@@ -1,4 +1,5 @@
 <area shape="rect" id="node2" href="$structthread__stats.html" title="Stats stored per&#45;thread." alt="" coords="5,117,115,147">
-<area shape="rect" id="node4" href="$structslab__stats.html" title="Stats stored per slab (and per thread)." alt="" coords="9,5,100,35">
-<area shape="rect" id="node6" href="$structconn__queue.html" title="conn_queue" alt="" coords="141,117,243,147">
-<area shape="rect" id="node8" href="$structconn__queue__item.html" title="conn_queue_item" alt="" coords="124,5,265,35">
+<area shape="rect" id="node4" href="$structslab__stats.html" title="Stats stored per slab (and per thread)." alt="" coords="15,5,105,35">
+<area shape="rect" id="node6" href="$structcache__t.html" title="Definition of the structure to keep track of the internal details of the cache allocator..." alt="" coords="139,117,213,147">
+<area shape="rect" id="node8" href="$structconn__queue.html" title="conn_queue" alt="" coords="240,117,341,147">
+<area shape="rect" id="node10" href="$structconn__queue__item.html" title="conn_queue_item" alt="" coords="220,5,361,35">
